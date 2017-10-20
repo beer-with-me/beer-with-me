@@ -10,7 +10,12 @@ public class Start_buttom : MonoBehaviour {
 		gameController = GameObject.Find ("GameController").GetComponent<GameController> ();
 	}
 
-	void OnMouseDown(){
+	void OnMouseUp(){
+		StartCoroutine (Start_game ());
+	}
+
+	IEnumerator Start_game(){
+		yield return new WaitForSeconds (0.01f);
 		gameController.SwitchScreen (ScreenName.MetaGame);
 	}
 }
