@@ -1364,6 +1364,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   line_gmo: {fileID: 1127975965}
+  aim_circle_prefab: {fileID: 1331483996422234, guid: 2cfe0fb9652e14f0c96d528b877c8334,
+    type: 2}
+  aim_circle: {fileID: 0}
+  speed_factor: 5
+  max_radius: 1.5
 --- !u!1 &2043590189
 GameObject:
   m_ObjectHideFlags: 0
