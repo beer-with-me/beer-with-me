@@ -8,11 +8,10 @@ public enum ScreenName{
 }
 
 public class GameController : MonoBehaviour {
-	public GameObject square;
-	public Transform mapBlocksFolder;
-
 	public GameObject mapStructorScreen;
 	public GameObject MetaGameScreen;
+
+	public NetworkController networkController;
 
 	void Start(){
 

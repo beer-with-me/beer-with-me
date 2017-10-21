@@ -5,25 +5,27 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 
-public class NetworkTest : MonoBehaviour {
+public class NetworkController : MonoBehaviour {
+	public GameController gameController;
+
 	private Socket _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 	private byte[] _recieveBuffer = new byte[2048];
 
 	void Start () {
-		Connect("61.216.17.151", 8787);
-		SendServer(new byte[]{0xa5, 0x01, 0x20, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
+		StartConnection("61.216.17.151", 8787);
+//		SendToServer(new byte[]{0xa5, 0x01, 0x20, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
 	}
 
 	void Update(){
-		if(Input.GetMouseButtonDown(0))
-			SendServer(new byte[]{0xa5, 0x01, 0x22, 0x06, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00});
+//		if(Input.GetMouseButtonDown(0))
+//			SendToServer(new byte[]{0xa5, 0x01, 0x22, 0x06, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00});
 	}
 
 	void OnApplicationQuit() {
-		Close();
+		CloseConnection();
 	}
 
-	public void Connect(string IP, int Port) {
+	public void StartConnection(string IP, int Port) {
 		try
 		{
 			_clientSocket.Connect(new IPEndPoint(IPAddress.Parse(IP), Port));
@@ -36,7 +38,7 @@ public class NetworkTest : MonoBehaviour {
 	/// 
 	/// 發送到 Server & 啟動接收
 	/// 
-	public void SendServer(byte[] data) {
+	public void SendToServer(byte[] data) {
 		try
 		{
 //			byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(sJson);
@@ -87,7 +89,7 @@ public class NetworkTest : MonoBehaviour {
 	/// 
 	/// 關閉 Socket 連線.
 	/// 
-	public void Close() {
+	public void CloseConnection() {
 		_clientSocket.Shutdown(SocketShutdown.Both);
 		_clientSocket.Close();
 	}
