@@ -6,13 +6,15 @@ using System.Net;
 using System.Net.Sockets;
 
 public class NetworkController : MonoBehaviour {
+	private string serverIp = "61.216.17.151";
+	private int serverPort = 8787;
 	public GameController gameController;
 
 	private Socket _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 	private byte[] _recieveBuffer = new byte[2048];
 
 	void Start () {
-		StartConnection("61.216.17.151", 8787);
+		StartConnection(serverIp, serverPort);
 //		SendToServer(new byte[]{0xa5, 0x01, 0x20, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
 	}
 
@@ -28,7 +30,7 @@ public class NetworkController : MonoBehaviour {
 	public void StartConnection(string IP, int Port) {
 		try
 		{
-			_clientSocket.Connect(new IPEndPoint(IPAddress.Parse(IP), Port));
+			_clientSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(IP), Port), new AsyncCallback(OnConnect), _clientSocket);
 		}
 		catch(SocketException ex)
 		{
@@ -60,6 +62,11 @@ public class NetworkController : MonoBehaviour {
 		socketAsyncData.SetBuffer(data,0,data.Length);
 		_clientSocket.SendAsync(socketAsyncData);
 	}
+	private void OnConnect(IAsyncResult iar)
+	{
+		Debug.Log ("On Server Connected");
+		SendToServer(new byte[]{0xa5, 0x01, 0x20, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
+	}
 	/// 
 	/// 接收封包.
 	/// 
@@ -76,7 +83,7 @@ public class NetworkController : MonoBehaviour {
 		Buffer.BlockCopy(_recieveBuffer,0,recData,0,recieved);
 
 		string recvStr = Encoding.UTF8.GetString(recData, 0, recieved);
-//		Debug.Log("recvStr: " + recvStr);
+		// Debug.Log("recvStr: " + recvStr);
 		string temp = "";
 		foreach (byte b in recData) {
 			temp += " ";
