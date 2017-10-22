@@ -37,6 +37,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4162937813153410}
+  - component: {fileID: 114348079009795422}
   m_Layer: 0
   m_Name: ConnectSetupPhase
   m_TagString: Untagged
@@ -56,7 +57,7 @@ GameObject:
   - component: {fileID: 61880516035816194}
   - component: {fileID: 114984678198384658}
   m_Layer: 0
-  m_Name: new_room_buttom
+  m_Name: create_room_buttom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -153,6 +154,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 6.85, y: 1.79}
   m_EdgeRadius: 0
+--- !u!114 &114348079009795422
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1530372131260368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd37a9b4f49834eb4aacb960f20c0795, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
+  networkController: {fileID: 0}
 --- !u!114 &114828920800645950
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -164,6 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b10af3f62f04468b3d7810ef3d0bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  connectSetup_Manager: {fileID: 0}
 --- !u!114 &114984678198384658
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -175,6 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b10af3f62f04468b3d7810ef3d0bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  connectSetup_Manager: {fileID: 114348079009795422}
 --- !u!212 &212374739717028536
 SpriteRenderer:
   m_ObjectHideFlags: 1
