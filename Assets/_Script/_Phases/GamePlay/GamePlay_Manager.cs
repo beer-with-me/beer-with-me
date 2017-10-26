@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GamePlay_Manager : MonoBehaviour {
+	public GameController gameController;
+	public NetworkController networkController;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	// when the phase begin
+	void OnEnable () {
+
 	}
 }

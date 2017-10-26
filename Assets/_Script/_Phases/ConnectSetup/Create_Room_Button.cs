@@ -6,6 +6,6 @@ public class Create_Room_Button : MonoBehaviour {
 	public ConnectSetup_Manager connectSetup_Manager;
 
 	void OnMouseUp(){
-		connectSetup_Manager.Create_Room();
+		StartCoroutine(connectSetup_Manager.Create_Room());
 	}
 }
