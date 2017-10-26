@@ -8,6 +8,7 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 
 	public void Create_Room(){
+		Debug.Log ("create");
 		// 取得裝置大小
 
 		// 向伺服端送出創建要求
@@ -22,6 +23,7 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 
 	public void Join_Room(){
+		Debug.Log ("join");
 		// 取得裝置大小
 
 		// 讀取玩家輸入的房間號碼

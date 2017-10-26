@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4253652638323048}
   - component: {fileID: 212374739717028536}
   - component: {fileID: 61188139583478120}
-  - component: {fileID: 114828920800645950}
+  - component: {fileID: 114529766985324960}
   m_Layer: 0
-  m_Name: join_room_buttom
+  m_Name: join_room_button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 61880516035816194}
   - component: {fileID: 114984678198384658}
   m_Layer: 0
-  m_Name: create_room_buttom
+  m_Name: create_room_button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,7 +70,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1530372131260368}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.22, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4348864410718796}
@@ -167,18 +167,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameController: {fileID: 0}
   networkController: {fileID: 0}
---- !u!114 &114828920800645950
+--- !u!114 &114529766985324960
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1282228194549614}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75b10af3f62f04468b3d7810ef3d0bca, type: 3}
+  m_Script: {fileID: 11500000, guid: 18482610be7ed4d439e98b0ef206b773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  connectSetup_Manager: {fileID: 0}
+  connectSetup_Manager: {fileID: 114348079009795422}
 --- !u!114 &114984678198384658
 MonoBehaviour:
   m_ObjectHideFlags: 1
