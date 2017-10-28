@@ -8,11 +8,10 @@ public class ConnectSetup_Manager : MonoBehaviour {
 	public KeyBoard_Handler keyBoard_Handler;
 
 	public IEnumerator Create_Room(){
-		Debug.Log ("create");
 		// 取得裝置大小
 
 		// 向伺服端送出創建要求
-		networkController.SendToServer(new Pocket(1, Command.C2M_CREATE, new int[2]{1, 1}));
+		networkController.SendToServer(new Pocket(gameController.version, C2M_Command.C2M_CREATE, new int[2]{1, 1}));
 
 		// 接收伺服端回傳的房間號碼
 		float connect_time = 0.0f;
@@ -23,7 +22,6 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 		gameController.room_ID = networkController.now_Pocket.datas [0];
 		networkController.now_Pocket = null;
-		Debug.Log (gameController.room_ID);
 
 		// 創建成功
 		Setup_Game();
@@ -36,7 +34,7 @@ public class ConnectSetup_Manager : MonoBehaviour {
 		// 讀取玩家輸入的房間號碼
 
 		// 向伺服端送出加入要求
-		networkController.SendToServer(new Pocket(1, Command.C2M_JOIN, new int[3]{keyBoard_Handler.room_ID, 1, 1}));
+		networkController.SendToServer(new Pocket(gameController.version, C2M_Command.C2M_JOIN, new int[3]{keyBoard_Handler.room_ID, 1, 1}));
 
 		float connect_time = 0.0f;
 		while (networkController.now_Pocket == null && Time.deltaTime <= 3.0f) {

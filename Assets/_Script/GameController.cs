@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public enum Phases{
@@ -13,6 +14,7 @@ public enum Phases{
 public class GameController : MonoBehaviour {
 	public NetworkController networkController;
 
+	public int version = 1;
 	public Phases now_Phase;
 	public GameObject ConnectSetup_gmo;
 	public GameObject LinkDevice_gmo;
