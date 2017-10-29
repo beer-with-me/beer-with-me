@@ -198,6 +198,8 @@ public class NetworkController : MonoBehaviour {
 
 	public Pocket now_Pocket;
 
+	private List<AsyncCallback> receiveListeners = new List<AsyncCallback> {};
+
 	void Start () {
 		is_Connect = false;
 		StartConnection(serverIp, serverPort);
@@ -272,7 +274,22 @@ public class NetworkController : MonoBehaviour {
 		byte[] recData = new byte[recieved];
 		Buffer.BlockCopy(_recieveBuffer,0,recData,0,recieved);
 
+		// Notify other managers when receiving data from server
+		foreach (AsyncCallback listener in receiveListeners) {
+			listener (AR);
+		}
+
 		AnalysisReceive (recData);
+	}
+
+	public int AddReceiveListener(AsyncCallback callback) {
+		int index = receiveListeners.Count;
+		receiveListeners.Add (callback);
+		return index;
+	}
+
+	public void RemoveReceiveListener(int index) {
+		receiveListeners.RemoveAt (index);
 	}
 
 	public void AnalysisReceive(Byte[] recData){
