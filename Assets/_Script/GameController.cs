@@ -22,13 +22,16 @@ public class GameController : MonoBehaviour {
 	public GameObject GamePlay_gmo;
 	public GameObject GameSettle_gmo;
 
+	public Camera MainCamera;
+	public Camera PlayCamera;
+
 	public bool is_hoster;
 	public int room_ID;
 
 	void Start(){
 		is_hoster = false;
 		room_ID = -1;
-		SwitchPhases (Phases.ConnectSetup);
+		SwitchPhases (Phases.GamePlay);
 	}
 
 //	void OnGUI(){
@@ -45,7 +48,10 @@ public class GameController : MonoBehaviour {
 		if(toPhase == Phases.ConnectSetup) 	ConnectSetup_gmo.SetActive (true);
 		if(toPhase == Phases.LinkDevice) 	LinkDevice_gmo.SetActive (true);
 		if(toPhase == Phases.GameSetup) 	GameSetup_gmo.SetActive (true);
-		if(toPhase == Phases.GamePlay)		GamePlay_gmo.SetActive (true);
+		if (toPhase == Phases.GamePlay)		GamePlay_gmo.SetActive (true);
 		if(toPhase == Phases.GameSettle)	GameSettle_gmo.SetActive (true);
+
+		PlayCamera.enabled = toPhase == Phases.GamePlay;
+		MainCamera.enabled = toPhase != Phases.GamePlay;
 	}
 }
