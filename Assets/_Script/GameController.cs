@@ -26,7 +26,6 @@ public class GameController : MonoBehaviour {
 	public Camera PlayCamera;
 
 	public bool is_hoster;
-	public int room_ID;
 	[HideInInspector] public bool is_Hoster;
 	[HideInInspector] public int room_ID;
 
