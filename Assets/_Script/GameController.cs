@@ -22,6 +22,10 @@ public class GameController : MonoBehaviour {
 	public GameObject gamePlay_gmo;
 	public GameObject gameSettle_gmo;
 
+	public Camera MainCamera;
+	public Camera PlayCamera;
+
+	public bool is_hoster;
 	[HideInInspector] public bool is_Hoster;
 	[HideInInspector] public int room_ID;
 
@@ -41,6 +45,7 @@ public class GameController : MonoBehaviour {
 
 	public void SwitchPhases(Phases toPhase){
 		now_Phase = toPhase;
+
 		connectSetup_gmo.SetActive (false);
 		linkDevice_gmo.SetActive (false);
 		gameSetup_gmo.SetActive (false);
@@ -51,5 +56,7 @@ public class GameController : MonoBehaviour {
 		if(toPhase == Phases.GameSetup) 	gameSetup_gmo.SetActive (true);
 		if(toPhase == Phases.GamePlay)		gamePlay_gmo.SetActive (true);
 		if(toPhase == Phases.GameSettle)	gameSettle_gmo.SetActive (true);
+		PlayCamera.enabled = toPhase == Phases.GamePlay;
+		MainCamera.enabled = toPhase != Phases.GamePlay;
 	}
 }
