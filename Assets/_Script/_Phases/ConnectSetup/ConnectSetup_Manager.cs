@@ -46,10 +46,15 @@ public class ConnectSetup_Manager : MonoBehaviour {
 			gameController.room_ID = keyBoard_Handler.room_ID;
 
 			// 加入成功
-			Setup_Game();
+			Setup_Game ();
+		} else {
+			gameController.Start_Dialog (Empty_Delegate, "Error", "Can't find this room.", 1);
 		}
 		networkController.now_Pocket = null;
 
+	}
+
+	public void Empty_Delegate(bool option){
 	}
 
 	// 取得裝置大小
