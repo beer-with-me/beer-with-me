@@ -96,12 +96,13 @@ public class Pocket{
 			return null;
 		}
 
-		byte[] ret = new byte[5 + Get_Bytes_Amount(slices)];
+		int data_length = Get_Bytes_Amount (slices);
+		byte[] ret = new byte[5 + data_length];
 		ret[0] = 0xa5;
 		ret[1] = System.Convert.ToByte(version);
 		ret[2] = System.Convert.ToByte((int)C2M_command);
-		ret[3] = System.Convert.ToByte((datas.Length * 2) % 256);
-		ret[4] = System.Convert.ToByte((datas.Length * 2) / 256);
+		ret[3] = System.Convert.ToByte(data_length % 256);
+		ret[4] = System.Convert.ToByte(data_length / 256);
 		int pointer = 5;
 		for(int i=0;i<slices.Length;i++){
 			int num = 0; 
