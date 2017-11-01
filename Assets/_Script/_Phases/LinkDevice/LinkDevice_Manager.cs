@@ -7,6 +7,8 @@ public class LinkDevice_Manager : MonoBehaviour {
 	public GameController gameController;
 	public NetworkController networkController;
 	public Text room_ID_text;
+	public Color init_Color;
+	public Color clicked_Color;
 	public Color[] colors;
 	public GameObject[] link_Blocks;
 
@@ -15,6 +17,9 @@ public class LinkDevice_Manager : MonoBehaviour {
 	}
 
 	public IEnumerator Press_Link_Buttons(int order){
+		// 對按下的按鈕塗色
+		Draw_Clicked_Color(order);
+
 		// 	若此邊尚未連接 -> 建立連接
 		networkController.SendToServer(new Pocket(gameController.version, C2M_Command.C2M_LINK_KEY, new int[1]{order}));
 
@@ -31,6 +36,14 @@ public class LinkDevice_Manager : MonoBehaviour {
 		Change_Color (dir, colors[color_index]);
 
 		// 	若此邊已連接 -> 取消連接
+	}
+
+	void Draw_Clicked_Color(int order){
+		for (int i = 0; i < 6; i++) {
+			if (link_Blocks [i].GetComponent<SpriteRenderer> ().color == clicked_Color) link_Blocks [i].GetComponent<SpriteRenderer> ().color = init_Color;
+		}
+
+		link_Blocks [order - 1].GetComponent<SpriteRenderer> ().color = clicked_Color;
 	}
 
 	public void Change_Color(int dir, Color color){

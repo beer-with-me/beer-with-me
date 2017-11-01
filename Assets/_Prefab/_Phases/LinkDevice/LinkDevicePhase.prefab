@@ -167,7 +167,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1969666172084598
 GameObject:
   m_ObjectHideFlags: 1
@@ -237,7 +237,7 @@ Transform:
   m_GameObject: {fileID: 1439151647001666}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 4704756395112764}
   m_RootOrder: 0
@@ -565,6 +565,8 @@ MonoBehaviour:
   gameController: {fileID: 0}
   networkController: {fileID: 0}
   room_ID_text: {fileID: 114751779793250748}
+  init_Color: {r: 1, g: 1, b: 1, a: 1}
+  clicked_Color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
   colors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 0.11764707, g: 0.14509805, b: 0.5294118, a: 1}
