@@ -5,14 +5,29 @@ using UnityEngine;
 public class Swipe : MonoBehaviour {
 	
 	public GamePlay_Manager gameplay_manager;
+	private Rigidbody rb;
 	private Vector2 firstPressPos;
 	private Vector2 secondPressPos;
 	private bool firstPressed = false;
+	private bool isMoving = false;
+	private Vector3 initPos;
 	private float force = 2.0f;
 
-	void Update () {
+	void Start() {
+		rb = this.gameObject.GetComponent<Rigidbody> ();
+	}
+
+	void FixedUpdate () {
 		if (gameplay_manager.isPlaying) {
 			SwipeHandler ();
+			float magnitude = rb.velocity.magnitude;
+			if (magnitude > 0.5 && !isMoving) {
+				isMoving = true;
+			}
+			if(isMoving && magnitude == 0.0f) {
+				isMoving = false;
+				gameplay_manager.lastDistance = Vector3.Distance (rb.position, initPos);
+			}
 		}
 	}
 		
@@ -54,7 +69,8 @@ public class Swipe : MonoBehaviour {
 
 	private void MoveObject (Vector2 firstPressPos, Vector2 secondPressPos) {
 		Vector2 currentSwipe = new Vector3(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
-		this.gameObject.GetComponent<Rigidbody> ().AddForce (new Vector3 (currentSwipe.x * force, 0, currentSwipe.y * force));
+		initPos = rb.position;
+		rb.AddForce (new Vector3 (currentSwipe.x * force, 0, currentSwipe.y * force));
 	}
 		
 }
