@@ -7,24 +7,32 @@ public class Swipe : MonoBehaviour {
 	public GamePlay_Manager gameplay_manager;
 	private Vector2 firstPressPos;
 	private Vector2 secondPressPos;
-	private Vector2 currentSwipe;
+	private bool firstPressed = false;
 	private float force = 2.0f;
 
 	void Update () {
 		if (gameplay_manager.isPlaying) {
 			SwipeHandler ();
+		}
+	}
+		
+	public void SwipeHandler() {
+		if (SystemInfo.deviceType == DeviceType.Desktop) {
+			SwipeHandlerDesktop ();
+		} else {
 			SwipeHandlerMobile ();
 		}
 	}
 
-	public void SwipeHandler() {
+	public void SwipeHandlerDesktop() {
 		if(Input.GetMouseButtonDown(0)) {
 			firstPressPos = new Vector2(Input.mousePosition.x,Input.mousePosition.y);
+			firstPressed = true;
 		}
-		if(Input.GetMouseButtonUp(0)) {
+		if(Input.GetMouseButtonUp(0) && firstPressed) {
 			secondPressPos = new Vector2(Input.mousePosition.x,Input.mousePosition.y);
-			currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
-			this.gameObject.GetComponent<Rigidbody> ().AddForce (new Vector3 (currentSwipe.x * force, 0, currentSwipe.y * force));
+			MoveObject (firstPressPos, secondPressPos);
+			firstPressed = false;
 		}
 	}
 
@@ -34,12 +42,19 @@ public class Swipe : MonoBehaviour {
 			Touch t = Input.GetTouch(0);
 			if(t.phase == TouchPhase.Began) {
 				firstPressPos = new Vector2(t.position.x,t.position.y);
+				firstPressed = true;
 			}
-			if(t.phase == TouchPhase.Ended) {
+			if(t.phase == TouchPhase.Ended && firstPressed) {
 				secondPressPos = new Vector2(t.position.x,t.position.y);
-				currentSwipe = new Vector3(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
-				this.gameObject.GetComponent<Rigidbody> ().AddForce (new Vector3 (currentSwipe.x * force, 0, currentSwipe.y * force));
+				MoveObject (firstPressPos, secondPressPos);
+				firstPressed = false;
 			}
 		}
 	}
+
+	private void MoveObject (Vector2 firstPressPos, Vector2 secondPressPos) {
+		Vector2 currentSwipe = new Vector3(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
+		this.gameObject.GetComponent<Rigidbody> ().AddForce (new Vector3 (currentSwipe.x * force, 0, currentSwipe.y * force));
+	}
+		
 }
