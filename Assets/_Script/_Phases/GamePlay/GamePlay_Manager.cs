@@ -5,6 +5,7 @@ using UnityEngine;
 
 
 public class GamePlay_Manager : MonoBehaviour {
+	public bool isPlaying = false;
 	public GameController gameController;
 	public NetworkController networkController;
 
@@ -12,10 +13,12 @@ public class GamePlay_Manager : MonoBehaviour {
 
 	// when the phase begin
 	void OnEnable () {
+		isPlaying = true;
 		serverReceiveIndex = networkController.AddReceiveListener (new AsyncCallback(OnReceive));
 	}
 
 	void OnDisable () {
+		isPlaying = false;
 		networkController.RemoveReceiveListener (serverReceiveIndex);
 	}
 

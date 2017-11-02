@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Swipe : MonoBehaviour {
-
+	
+	public GamePlay_Manager gameplay_manager;
 	private Vector2 firstPressPos;
 	private Vector2 secondPressPos;
 	private Vector2 currentSwipe;
 	private float force = 2.0f;
 
 	void Update () {
-		SwipeHandler ();
-		SwipeHandlerMobile ();
+		if (gameplay_manager.isPlaying) {
+			SwipeHandler ();
+			SwipeHandlerMobile ();
+		}
 	}
 
 	public void SwipeHandler() {
