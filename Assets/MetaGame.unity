@@ -261,12 +261,6 @@ GameObject:
   m_PrefabParentObject: {fileID: 1787055054866864, guid: 4a9bfa2c8eb22469d89d62d89e5697e2,
     type: 2}
   m_PrefabInternal: {fileID: 1553423102}
---- !u!114 &239873850 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114997611494476578, guid: 4a9bfa2c8eb22469d89d62d89e5697e2,
-    type: 2}
-  m_PrefabInternal: {fileID: 1553423102}
-  m_Script: {fileID: 11500000, guid: f2049d222f99a47b393b402b69d7a23d, type: 3}
 --- !u!1 &321538727
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,7 +300,6 @@ MonoBehaviour:
   gameSettle_gmo: {fileID: 1056320233}
   MainCamera: {fileID: 1066740352}
   PlayCamera: {fileID: 1954476986}
-  is_hoster: 0
   is_Hoster: 0
   room_ID: 0
   start_Here: 0
@@ -1164,11 +1157,6 @@ Prefab:
       propertyPath: networkController
       value: 
       objectReference: {fileID: 1718380416}
-    - target: {fileID: 114019606659813404, guid: 4a9bfa2c8eb22469d89d62d89e5697e2,
-        type: 2}
-      propertyPath: gameplay_manager
-      value: 
-      objectReference: {fileID: 239873850}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4a9bfa2c8eb22469d89d62d89e5697e2, type: 2}
   m_IsPrefabParent: 0

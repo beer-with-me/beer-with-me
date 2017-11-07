@@ -945,6 +945,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248d493332994401eb98f01fd6ac45d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameplay_manager: {fileID: 114997611494476578}
 --- !u!114 &114128258016405316
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -969,6 +970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248d493332994401eb98f01fd6ac45d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameplay_manager: {fileID: 0}
 --- !u!114 &114245428905663122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1032,6 +1034,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2049d222f99a47b393b402b69d7a23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPlaying: 0
+  lastDistance: 0
+  isLeavingTable: 0
   gameController: {fileID: 0}
   networkController: {fileID: 0}
 --- !u!124 &124460434464295956

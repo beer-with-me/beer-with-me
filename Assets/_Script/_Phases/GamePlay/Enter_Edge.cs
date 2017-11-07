@@ -9,7 +9,8 @@ public class Enter_Edge : MonoBehaviour {
 	void OnCollisionEnter(Collision collisionInfo) {
 		// Falling off the table / entering the other table
 		if (collisionInfo.gameObject.name == "Beer") {
-			gamePlay_manager.LeaveTable (dirKey);
+			gamePlay_manager.isLeavingTable = true;
+			gamePlay_manager.EnterEdge (dirKey);
 		}
 	}
 }
