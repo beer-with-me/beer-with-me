@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 
 public enum Data_Type{
 	Byte,
 	Short,
 	Unsigned_Short,
-	Four_Byte_Float,
+	SP_Float /* single_precision_float */
 }
 
 public enum C2M_Command{
@@ -41,6 +42,7 @@ public class Pocket{
 	public C2M_Command C2M_command;
 	public M2C_Command M2C_command;
 	public int[] datas;
+	public float[] f_datas;
 	public byte[] b_datas;
 
 	public Pocket(){
@@ -52,6 +54,14 @@ public class Pocket{
 		version = v;
 		C2M_command = c;
 		datas = d;
+		f_datas = new float[0];
+		b_datas = Generate_b_datas();
+	}
+	public Pocket(int v, C2M_Command c, int[] d, float[] f_d){
+		version = v;
+		C2M_command = c;
+		datas = d;
+		f_datas = f_d;
 		b_datas = Generate_b_datas();
 	}
 
@@ -61,25 +71,34 @@ public class Pocket{
 		M2C_command = (M2C_Command)b_d[2];
 		Data_Type[] slices = Get_M2C_Pocket_Slices_Sizes ();
 		datas = new int[slices.Length];
-		int pointer = 5;
+		int d_pointer = 0;
+		int f_d_pointer = 0;
+		int b_d_pointer = 5;
 		for(int i=0;i<slices.Length;i++){
 			int num = 0; 
+			byte[] bytes = new byte[0];
 			switch (slices [i]) {
 			case Data_Type.Byte:
-				num = b_d [pointer++];
-				datas [i] = (num >= 128) ? num - 256 : num;
+				num = b_d [b_d_pointer++];
+				datas [d_pointer++] = (num >= 128) ? num - 256 : num;
 				break;
 			case Data_Type.Short:
-				num =  b_d [pointer++];
-				num += b_d [pointer++] * 256;
-				datas [i] = (num >= 32768) ? num - 65536 : num;
+				num =  b_d [b_d_pointer++];
+				num += b_d [b_d_pointer++] * 256;
+				datas [d_pointer++] = (num >= 32768) ? num - 65536 : num;
 				break;
 			case Data_Type.Unsigned_Short:
-				num =  b_d [pointer++];
-				num += b_d [pointer++] * 256;
-				datas [i] = num;
+				num =  b_d [b_d_pointer++];
+				num += b_d [b_d_pointer++] * 256;
+				datas [d_pointer++] = num;
 				break;
-			case Data_Type.Four_Byte_Float:
+			case Data_Type.SP_Float:
+				bytes = new byte[4];
+				bytes [0] = b_d [b_d_pointer++];
+				bytes [1] = b_d [b_d_pointer++];
+				bytes [2] = b_d [b_d_pointer++];
+				bytes [3] = b_d [b_d_pointer++];
+				f_datas [f_d_pointer++] = Bytes_To_SP_Float (bytes);
 				break;
 			default:
 				break;
@@ -103,25 +122,38 @@ public class Pocket{
 		ret[2] = System.Convert.ToByte((int)C2M_command);
 		ret[3] = System.Convert.ToByte(data_length % 256);
 		ret[4] = System.Convert.ToByte(data_length / 256);
-		int pointer = 5;
+		int d_pointer = 0;
+		int f_d_pointer = 0;
+		int b_d_pointer = 5;
 		for(int i=0;i<slices.Length;i++){
-			int num = 0; 
+			int num = 0;
+			float f = 0.0f;
 			switch (slices [i]) {
 			case Data_Type.Byte:
-				num = datas [i] + ((datas [i] > 0) ? 0 : 256);
-				ret [pointer++] = System.Convert.ToByte (num);
+				num = datas [d_pointer] + ((datas [d_pointer] > 0) ? 0 : 256);
+				ret [b_d_pointer++] = System.Convert.ToByte (num);
+				d_pointer++;
 				break;
 			case Data_Type.Short:
-				num = datas [i] + ((datas [i] > 0) ? 0 : 65536);
-				ret [pointer++] = System.Convert.ToByte (num % 256);
-				ret [pointer++] = System.Convert.ToByte (num / 256);
+				num = datas [d_pointer] + ((datas [d_pointer] > 0) ? 0 : 65536);
+				ret [b_d_pointer++] = System.Convert.ToByte (num % 256);
+				ret [b_d_pointer++] = System.Convert.ToByte (num / 256);
+				d_pointer++;
 				break;
 			case Data_Type.Unsigned_Short:
-				num = datas [i];
-				ret [pointer++] = System.Convert.ToByte (num % 256);
-				ret [pointer++] = System.Convert.ToByte (num / 256);
+				num = datas [d_pointer];
+				ret [b_d_pointer++] = System.Convert.ToByte (num % 256);
+				ret [b_d_pointer++] = System.Convert.ToByte (num / 256);
+				d_pointer++;
 				break;
-			case Data_Type.Four_Byte_Float:
+			case Data_Type.SP_Float:
+				f = f_datas [f_d_pointer];
+				Byte[] temp_bytes = SP_Float_To_Bytes (f);
+				ret [b_d_pointer++] = temp_bytes [0];
+				ret [b_d_pointer++] = temp_bytes [1];
+				ret [b_d_pointer++] = temp_bytes [2];
+				ret [b_d_pointer++] = temp_bytes [3];
+				f_d_pointer++;
 				break;
 			default:
 				break;
@@ -137,7 +169,7 @@ public class Pocket{
 			case Data_Type.Byte:			ret += 1;	break;
 			case Data_Type.Short:			ret += 2;	break;
 			case Data_Type.Unsigned_Short:	ret += 2;	break;
-			case Data_Type.Four_Byte_Float:	ret += 4;	break;
+			case Data_Type.SP_Float:	ret += 4;	break;
 			}
 		}
 		return ret;
@@ -149,8 +181,8 @@ public class Pocket{
 		case C2M_Command.C2M_JOIN:		return new Data_Type[3]{ Data_Type.Unsigned_Short, Data_Type.Short, Data_Type.Short };
 		case C2M_Command.C2M_LINK_KEY:	return new Data_Type[1]{ Data_Type.Byte };
 		case C2M_Command.C2M_START0:	return new Data_Type[0]{};
-		case C2M_Command.C2M_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.Four_Byte_Float, Data_Type.Four_Byte_Float, Data_Type.Four_Byte_Float, Data_Type.Four_Byte_Float };
-		case C2M_Command.C2M_BEER_STOP:	return new Data_Type[1]{ Data_Type.Four_Byte_Float };
+		case C2M_Command.C2M_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float };
+		case C2M_Command.C2M_BEER_STOP:	return new Data_Type[1]{ Data_Type.SP_Float };
 		case C2M_Command.C2M_PING:		return new Data_Type[0]{};
 		case C2M_Command.C2M_EXIT:		return new Data_Type[0]{};
 		default:
@@ -165,8 +197,8 @@ public class Pocket{
 		case M2C_Command.M2C_JOIN:		return new Data_Type[1]{ Data_Type.Byte };
 		case M2C_Command.M2C_LINK:		return new Data_Type[2]{ Data_Type.Byte, Data_Type.Byte };
 		case M2C_Command.M2C_WAIT_FIRE:	return new Data_Type[3]{ Data_Type.Byte, Data_Type.Short, Data_Type.Short };
-		case M2C_Command.M2C_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.Four_Byte_Float, Data_Type.Four_Byte_Float, Data_Type.Four_Byte_Float, Data_Type.Four_Byte_Float };
-		case M2C_Command.M2C_SCORE:		return new Data_Type[2]{ Data_Type.Four_Byte_Float, Data_Type.Four_Byte_Float };
+		case M2C_Command.M2C_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float };
+		case M2C_Command.M2C_SCORE:		return new Data_Type[2]{ Data_Type.SP_Float, Data_Type.SP_Float };
 		case M2C_Command.M2C_EXIT:		return new Data_Type[0]{};
 		default:
 			break;
@@ -184,6 +216,21 @@ public class Pocket{
 		string b_d_string = "";
 		foreach (byte b_d in b_datas)b_d_string += String.Format ("{0:X2}", b_d) + " ";
 		Debug.Log(s + "\nversion: " + version.ToString() + "\nC2M: " + C2M_command + "\nM2C: " + M2C_command + "\ndatas: " + d_string + "\nb_datas: " + b_d_string);
+	}
+
+	float Bytes_To_SP_Float(byte[] bytes){
+		MemoryStream stream = new MemoryStream();
+		BinaryReader br = new BinaryReader (stream);
+		br.Read (bytes, 0, 4);
+		return BitConverter.ToSingle (bytes , 0);
+	}
+
+	byte[] SP_Float_To_Bytes(float f){
+		MemoryStream stream = new MemoryStream();
+		BinaryWriter bw = new BinaryWriter(stream);
+		bw.Write(f);
+		bw.Flush();
+		return stream.ToArray();
 	}
 }
 
