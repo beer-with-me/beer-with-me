@@ -37,11 +37,11 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	private void BeerStop() {
-		networkController.SendToServer (new Pocket (gameController.version, C2M_Command.C2M_BEER_STOP, new int[1]{(int) lastDistance * 1000}));
+		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_BEER_STOP, new int[1]{(int) lastDistance * 1000}));
 	}
 
 	private void Cross(int dirKey) {
-		networkController.SendToServer (new Pocket (gameController.version, C2M_Command.C2M_CROSS, new int[6]{dirKey, 1, 1, 1, 1, (int) lastDistance * 1000}));
+		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_CROSS, new int[6]{dirKey, 1, 1, 1, 1, (int) lastDistance * 1000}));
 	}
 
 	private void OnReceive(IAsyncResult AR) {

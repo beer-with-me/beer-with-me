@@ -13,6 +13,7 @@ public enum Phases{
 }
 
 public delegate void Dialog_Delegate(bool option);
+public delegate void Network_Delegate(Packet packet);
 
 public class GameController : MonoBehaviour {
 	public NetworkController networkController;
@@ -43,28 +44,23 @@ public class GameController : MonoBehaviour {
 		is_Hoster = false;
 		room_ID = -1;
 		start_Here = false;
-		SwitchPhases (Phases.ConnectSetup);
+		SwitchPhases(Phases.ConnectSetup);
 	}
 
-//	void OnGUI(){
-//		GUI.Label (new Rect(0, 0, 400, 400),"H: " + (Screen.height / Screen.dpi).ToString() + " ,W: " + (Screen.width / Screen.dpi).ToString());
-//	}
-
-	public void SwitchPhases(Phases toPhase){
-		now_Phase = toPhase;
-
+	public void SwitchPhases(Phases phase){
+		now_Phase = phase;
 		connectSetup_gmo.SetActive (false);
 		linkDevice_gmo.SetActive (false);
 		gameSetup_gmo.SetActive (false);
 		gamePlay_gmo.SetActive (false);
 		gameSettle_gmo.SetActive (false);
-		if(toPhase == Phases.ConnectSetup) 	connectSetup_gmo.SetActive (true);
-		if(toPhase == Phases.LinkDevice) 	linkDevice_gmo.SetActive (true);
-		if(toPhase == Phases.GameSetup) 	gameSetup_gmo.SetActive (true);
-		if(toPhase == Phases.GamePlay)		gamePlay_gmo.SetActive (true);
-		if(toPhase == Phases.GameSettle)	gameSettle_gmo.SetActive (true);
-		PlayCamera.enabled = toPhase == Phases.GamePlay;
-		MainCamera.enabled = toPhase != Phases.GamePlay;
+		if(phase == Phases.ConnectSetup) 	connectSetup_gmo.SetActive (true);
+		if(phase == Phases.LinkDevice) 	linkDevice_gmo.SetActive (true);
+		if(phase == Phases.GameSetup) 	gameSetup_gmo.SetActive (true);
+		if(phase == Phases.GamePlay)		gamePlay_gmo.SetActive (true);
+		if(phase == Phases.GameSettle)	gameSettle_gmo.SetActive (true);
+		PlayCamera.enabled = phase == Phases.GamePlay;
+		MainCamera.enabled = phase != Phases.GamePlay;
 	}
 
 	public void Start_Dialog(Dialog_Delegate d, string title, string content, int options_amount){

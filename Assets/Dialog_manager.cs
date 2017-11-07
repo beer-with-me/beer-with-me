@@ -20,7 +20,7 @@ public class Dialog_manager : MonoBehaviour {
 	public void Click_Dialog(bool option){
 		gameController.has_dialog = false;
 		GetComponent<Animator> ().Play("out");
-		dialog_Delegate (option);
+		if(dialog_Delegate != null)dialog_Delegate (option);
 	}
 
 	public void destroy(){

@@ -7,6 +7,6 @@ public class Click_Link_Block : MonoBehaviour {
 	public int order;
 
 	void OnMouseUp(){
-		StartCoroutine(linkDevice_Manager.Press_Link_Buttons(order));
+		linkDevice_Manager.Press_Link_Buttons(order);
 	}
 }

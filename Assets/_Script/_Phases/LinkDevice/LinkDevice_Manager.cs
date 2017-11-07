@@ -16,26 +16,21 @@ public class LinkDevice_Manager : MonoBehaviour {
 		room_ID_text.text = gameController.room_ID.ToString();
 	}
 
-	public IEnumerator Press_Link_Buttons(int order){
+	public void Press_Link_Buttons(int order){
 		// 對按下的按鈕塗色
 		Draw_Clicked_Color(order);
 
 		// 	若此邊尚未連接 -> 建立連接
-		networkController.SendToServer(new Pocket(gameController.version, C2M_Command.C2M_LINK_KEY, new int[1]{order}));
-
-		float connect_time = 0.0f;
-		while (networkController.now_Pocket == null) {
-			connect_time += Time.deltaTime;
-			yield return null;
-		}
-
-		int dir = networkController.now_Pocket.datas [0];
-		int color_index = networkController.now_Pocket.datas [1];
-		networkController.now_Pocket = null;
-
-		Change_Color (dir, colors[color_index]);
+		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_LINK_KEY, new int[1]{order}));
+		networkController.ReceiveFromServer (RFS_Press_Link_Buttons);
 
 		// 	若此邊已連接 -> 取消連接
+	}
+
+	public void RFS_Press_Link_Buttons(Packet packet){
+		int dir = packet.datas [0];
+		int color_index = packet.datas [1];
+		Change_Color (dir, colors[color_index]);
 	}
 
 	void Draw_Clicked_Color(int order){
@@ -50,20 +45,15 @@ public class LinkDevice_Manager : MonoBehaviour {
 		link_Blocks [dir - 1].GetComponent<SpriteRenderer> ().color = color;
 	}
 
-	public IEnumerator Start0(){
+	public void Start0(){
 		// 建立 start0 賽局
-		networkController.SendToServer(new Pocket(gameController.version, C2M_Command.C2M_START0, new int[0]{}));
+		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_START0, new int[0]{}));
+		networkController.ReceiveFromServer (RFS_Start0);
+	}
 
-		float connect_time = 0.0f;
-		while (networkController.now_Pocket == null) {
-			connect_time += Time.deltaTime;
-			yield return null;
-		}
-
-		gameController.start_Here = (networkController.now_Pocket.datas [0] == 0) ? false : true;
-		gameController.start_Position = new Vector2(networkController.now_Pocket.datas [1], networkController.now_Pocket.datas [2]);
-		networkController.now_Pocket = null;
-
+	public void RFS_Start0(Packet packet){
+		gameController.start_Here = (packet.datas [0] == 0) ? false : true;
+		gameController.start_Position = new Vector2(packet.datas [1], packet.datas [2]);
 
 		// 向 GameController 回報階段任務完成 ， disable script
 		gameController.SwitchPhases(Phases.GamePlay);

@@ -37,7 +37,7 @@ public enum M2C_Command{
 	M2C_EXIT = 0x80,
 }
 
-public class Pocket{
+public class Packet{
 	public int version;
 	public C2M_Command C2M_command;
 	public M2C_Command M2C_command;
@@ -45,19 +45,19 @@ public class Pocket{
 	public float[] f_datas;
 	public byte[] b_datas;
 
-	public Pocket(){
+	public Packet(){
 		
 	}
 
 	// 輸入數值，並自動建立bytes[]
-	public Pocket(int v, C2M_Command c, int[] d){
+	public Packet(int v, C2M_Command c, int[] d){
 		version = v;
 		C2M_command = c;
 		datas = d;
 		f_datas = new float[0];
 		b_datas = Generate_b_datas();
 	}
-	public Pocket(int v, C2M_Command c, int[] d, float[] f_d){
+	public Packet(int v, C2M_Command c, int[] d, float[] f_d){
 		version = v;
 		C2M_command = c;
 		datas = d;
@@ -65,11 +65,11 @@ public class Pocket{
 		b_datas = Generate_b_datas();
 	}
 
-	public Pocket(byte[] b_d){
+	public Packet(byte[] b_d){
 		b_datas = b_d;
 		version = b_d [1];
 		M2C_command = (M2C_Command)b_d[2];
-		Data_Type[] slices = Get_M2C_Pocket_Slices_Sizes ();
+		Data_Type[] slices = Get_M2C_Packet_Slices_Sizes ();
 		datas = new int[slices.Length];
 		int d_pointer = 0;
 		int f_d_pointer = 0;
@@ -108,7 +108,7 @@ public class Pocket{
 	}
 
 	public byte[] Generate_b_datas(){
-		Data_Type[] slices = Get_C2M_Pocket_Slices_Sizes ();
+		Data_Type[] slices = Get_C2M_Packet_Slices_Sizes ();
 
 		if (slices.Length != datas.Length) {
 			Debug.Log ("封包長度或參數數量錯誤\n" + C2M_command.ToString() + " ");
@@ -175,7 +175,7 @@ public class Pocket{
 		return ret;
 	}
 
-	Data_Type[] Get_C2M_Pocket_Slices_Sizes(){
+	Data_Type[] Get_C2M_Packet_Slices_Sizes(){
 		switch (C2M_command) {
 		case C2M_Command.C2M_CREATE:	return new Data_Type[2]{ Data_Type.Short, Data_Type.Short };
 		case C2M_Command.C2M_JOIN:		return new Data_Type[3]{ Data_Type.Unsigned_Short, Data_Type.Short, Data_Type.Short };
@@ -191,7 +191,7 @@ public class Pocket{
 		return null;
 	}
 
-	Data_Type[] Get_M2C_Pocket_Slices_Sizes(){
+	Data_Type[] Get_M2C_Packet_Slices_Sizes(){
 		switch (M2C_command) {
 		case M2C_Command.M2C_CREATE:	return new Data_Type[1]{ Data_Type.Unsigned_Short };
 		case M2C_Command.M2C_JOIN:		return new Data_Type[1]{ Data_Type.Byte };
@@ -244,8 +244,6 @@ public class NetworkController : MonoBehaviour {
 	[HideInInspector] public bool is_Connect;
 	public bool hide_ping_msg;
 
-	public Pocket now_Pocket;
-
 	private List<AsyncCallback> receiveListeners = new List<AsyncCallback> {};
 
 	void Start () {
@@ -268,12 +266,9 @@ public class NetworkController : MonoBehaviour {
 			Debug.Log(ex.Message);
 		}
 	}
-	/// 
-	/// 發送到 Server & 啟動接收
-	/// 
-	public void SendToServer(Pocket pocket) {
-		if(pocket.C2M_command != C2M_Command.C2M_PING || !hide_ping_msg)pocket.Print ("SEND");
-		byte[] data = pocket.b_datas;
+	public void SendToServer(Packet packet) {
+		if(packet.C2M_command != C2M_Command.C2M_PING || !hide_ping_msg)packet.Print ("SEND");
+		byte[] data = packet.b_datas;
 		try
 		{
 //			byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(sJson);
@@ -284,11 +279,10 @@ public class NetworkController : MonoBehaviour {
 		{
 			Debug.LogWarning(ex.Message);
 		}
-		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback),null);
 	}
-	/// 
-	/// 發送封包到 Socket Server 
-	/// 
+	public void ReceiveFromServer(Network_Delegate network_Delegate){
+		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), network_Delegate);
+	}
 	private void SendData(byte[] data)
 	{
 		SocketAsyncEventArgs socketAsyncData = new SocketAsyncEventArgs();
@@ -299,12 +293,11 @@ public class NetworkController : MonoBehaviour {
 	{
 		Debug.Log ("On Server Connected");
 		is_Connect = true;
-//		SendToServer(new byte[]{0xa5, 0x01, 0x20, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00});
 	}
 
 	IEnumerator Start_Ping(){
 		while (true) {
-			if (is_Connect) SendToServer (new Pocket(gameController.version, C2M_Command.C2M_PING, new int[0]{}));
+			if (is_Connect) SendToServer (new Packet(gameController.version, C2M_Command.C2M_PING, new int[0]{}));
 			yield return new WaitForSeconds (1);
 		}
 	}
@@ -315,6 +308,8 @@ public class NetworkController : MonoBehaviour {
 	private void ReceiveCallback(IAsyncResult AR)
 	{
 		int recieved = _clientSocket.EndReceive(AR);
+		Network_Delegate network_Delegate = (Network_Delegate)AR.AsyncState;
+		Debug.Log (network_Delegate);
 		Debug.Log ("received " + recieved.ToString () + " bytes");
 		if(recieved <= 0)
 			return;
@@ -327,7 +322,9 @@ public class NetworkController : MonoBehaviour {
 			listener (AR);
 		}
 
-		AnalysisReceive (recData);
+		Packet packet = new Packet(recData);
+		packet.Print ("RECEIVED");
+		network_Delegate (packet);
 	}
 
 	public int AddReceiveListener(AsyncCallback callback) {
@@ -338,11 +335,6 @@ public class NetworkController : MonoBehaviour {
 
 	public void RemoveReceiveListener(int index) {
 		receiveListeners.RemoveAt (index);
-	}
-
-	public void AnalysisReceive(Byte[] recData){
-		now_Pocket = new Pocket(recData);
-		now_Pocket.Print ("RECEIVED");
 	}
 
 

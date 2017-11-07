@@ -6,6 +6,6 @@ public class Join_Room_Button : MonoBehaviour {
 	public ConnectSetup_Manager connectSetup_Manager;
 
 	void OnMouseUp(){
-		StartCoroutine(connectSetup_Manager.Join_Room());
+		connectSetup_Manager.Join_Room();
 	}
 }
