@@ -181,8 +181,8 @@ public class Pocket{
 		case C2M_Command.C2M_JOIN:		return new Data_Type[3]{ Data_Type.Unsigned_Short, Data_Type.Short, Data_Type.Short };
 		case C2M_Command.C2M_LINK_KEY:	return new Data_Type[1]{ Data_Type.Byte };
 		case C2M_Command.C2M_START0:	return new Data_Type[0]{};
-		case C2M_Command.C2M_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float };
-		case C2M_Command.C2M_BEER_STOP:	return new Data_Type[1]{ Data_Type.SP_Float };
+		case C2M_Command.C2M_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.Short };
+		case C2M_Command.C2M_BEER_STOP:	return new Data_Type[1]{ Data_Type.Short };
 		case C2M_Command.C2M_PING:		return new Data_Type[0]{};
 		case C2M_Command.C2M_EXIT:		return new Data_Type[0]{};
 		default:
@@ -197,8 +197,8 @@ public class Pocket{
 		case M2C_Command.M2C_JOIN:		return new Data_Type[1]{ Data_Type.Byte };
 		case M2C_Command.M2C_LINK:		return new Data_Type[2]{ Data_Type.Byte, Data_Type.Byte };
 		case M2C_Command.M2C_WAIT_FIRE:	return new Data_Type[3]{ Data_Type.Byte, Data_Type.Short, Data_Type.Short };
-		case M2C_Command.M2C_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float };
-		case M2C_Command.M2C_SCORE:		return new Data_Type[2]{ Data_Type.SP_Float, Data_Type.SP_Float };
+		case M2C_Command.M2C_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.Short };
+		case M2C_Command.M2C_SCORE:		return new Data_Type[2]{ Data_Type.Short, Data_Type.Short };
 		case M2C_Command.M2C_EXIT:		return new Data_Type[0]{};
 		default:
 			break;
