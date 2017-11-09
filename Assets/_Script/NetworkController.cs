@@ -281,7 +281,6 @@ public class NetworkController : MonoBehaviour {
 		byte[] data = packet.b_datas;
 		try
 		{
-//			byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(sJson);
 			byte[] byteArray = data;
 			SendData(byteArray);
 		}
@@ -290,9 +289,6 @@ public class NetworkController : MonoBehaviour {
 			Debug.LogWarning(ex.Message);
 		}
 	}
-//	public void ReceiveFromServer(Network_Delegate network_Delegate){
-//		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), network_Delegate);
-//	}
 	private void SendData(byte[] data)
 	{
 		SocketAsyncEventArgs socketAsyncData = new SocketAsyncEventArgs();
@@ -313,15 +309,11 @@ public class NetworkController : MonoBehaviour {
 		}
 	}
 
-	/// 
 	/// 接收封包.
-	/// 
 	private void ReceiveCallback(IAsyncResult AR)
 	{
 		int recieved = _clientSocket.EndReceive(AR);
 		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), null);
-//		Network_Delegate network_Delegate = (Network_Delegate)AR.AsyncState;
-//		Debug.Log (network_Delegate);
 		Debug.Log ("received " + recieved.ToString () + " bytes");
 		if(recieved <= 0)
 			return;
@@ -340,8 +332,6 @@ public class NetworkController : MonoBehaviour {
 				}
 			}
 		}
-
-//		network_Delegate (packet);
 	}
 
 	public int AddSubscriptor(Subscriptor subscriptor) {
@@ -353,11 +343,8 @@ public class NetworkController : MonoBehaviour {
 	public void RemoveSubscriptor(int index) {
 		subscriptors.RemoveAt (index);
 	}
-
-
-	/// 
+		
 	/// 關閉 Socket 連線.
-	/// 
 	public void CloseConnection() {
 		_clientSocket.Shutdown(SocketShutdown.Both);
 		_clientSocket.Close();
