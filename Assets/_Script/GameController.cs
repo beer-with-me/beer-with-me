@@ -13,7 +13,7 @@ public enum Phases{
 }
 
 public delegate void Dialog_Delegate(bool option);
-public delegate void Network_Delegate(Packet packet);
+public delegate void Subscriptor_Delegate(Packet packet);
 
 public class GameController : MonoBehaviour {
 	public NetworkController networkController;

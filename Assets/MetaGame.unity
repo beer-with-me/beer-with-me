@@ -1369,7 +1369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45f00cf606f0f400fa79743610a2eb0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameController: {fileID: 0}
+  gameController: {fileID: 321538728}
   is_Connect: 0
   hide_ping_msg: 1
 --- !u!4 &1718380417

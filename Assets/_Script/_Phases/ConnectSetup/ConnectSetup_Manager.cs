@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class ConnectSetup_Manager : MonoBehaviour {
 	public GameController gameController;
 	public NetworkController networkController;
 	public KeyBoard_Handler keyBoard_Handler;
+	private int serverReceiveIndex;
 
 	private bool can_Setup_Game;
 	private bool can_Start_Dialog;
@@ -13,6 +15,10 @@ public class ConnectSetup_Manager : MonoBehaviour {
 	void OnEnable(){
 		can_Setup_Game = false;
 		can_Start_Dialog = false;
+		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[2]{M2C_Command.M2C_CREATE, M2C_Command.M2C_JOIN}));
+	}
+	void OnDisable () {
+		networkController.RemoveSubscriptor (serverReceiveIndex);
 	}
 
 	void Update(){
@@ -31,7 +37,7 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 		// 向伺服端送出創建要求
 		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_CREATE, new int[2]{1, 1}));
-		networkController.ReceiveFromServer (RFS_Create_Room);
+//		networkController.ReceiveFromServer (RFS_Create_Room);
 	}
 
 	public void RFS_Create_Room(Packet packet){
@@ -50,7 +56,7 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 		// 向伺服端送出加入要求
 		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_JOIN, new int[3]{keyBoard_Handler.room_ID, 1, 1}));
-		networkController.ReceiveFromServer (RFS_Join_Room);
+//		networkController.ReceiveFromServer (RFS_Join_Room);
 
 	}
 
@@ -75,5 +81,19 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 		// 向 GameController 回報階段任務完成 ， disable script
 		gameController.SwitchPhases(Phases.LinkDevice);
+	}
+
+	public void OnReceive(Packet packet) {
+		Debug.Log ("ConnectSetup receive");
+		switch (packet.M2C_command) {
+		case M2C_Command.M2C_CREATE:
+			RFS_Create_Room (packet);
+			break;
+		case M2C_Command.M2C_JOIN:
+			RFS_Join_Room (packet);
+			break;
+		default:
+			break;
+		}
 	}
 }

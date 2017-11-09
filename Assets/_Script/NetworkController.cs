@@ -234,6 +234,16 @@ public class Packet{
 	}
 }
 
+public class Subscriptor{
+	public Subscriptor_Delegate subscriptor_Delegate;
+	public M2C_Command[] commands;
+
+	public Subscriptor(Subscriptor_Delegate s, M2C_Command[] m){
+		subscriptor_Delegate = s;
+		commands = m;
+	}
+}
+
 public class NetworkController : MonoBehaviour {
 	private string serverIp = "61.216.17.151";
 	private int serverPort = 8787;
@@ -244,7 +254,7 @@ public class NetworkController : MonoBehaviour {
 	[HideInInspector] public bool is_Connect;
 	public bool hide_ping_msg;
 
-	private List<AsyncCallback> receiveListeners = new List<AsyncCallback> {};
+	private List<Subscriptor> subscriptors = new List<Subscriptor> {};
 
 	void Start () {
 		is_Connect = false;
@@ -280,9 +290,9 @@ public class NetworkController : MonoBehaviour {
 			Debug.LogWarning(ex.Message);
 		}
 	}
-	public void ReceiveFromServer(Network_Delegate network_Delegate){
-		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), network_Delegate);
-	}
+//	public void ReceiveFromServer(Network_Delegate network_Delegate){
+//		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), network_Delegate);
+//	}
 	private void SendData(byte[] data)
 	{
 		SocketAsyncEventArgs socketAsyncData = new SocketAsyncEventArgs();
@@ -292,6 +302,7 @@ public class NetworkController : MonoBehaviour {
 	private void OnConnect(IAsyncResult iar)
 	{
 		Debug.Log ("On Server Connected");
+		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), null);
 		is_Connect = true;
 	}
 
@@ -308,33 +319,39 @@ public class NetworkController : MonoBehaviour {
 	private void ReceiveCallback(IAsyncResult AR)
 	{
 		int recieved = _clientSocket.EndReceive(AR);
-		Network_Delegate network_Delegate = (Network_Delegate)AR.AsyncState;
-		Debug.Log (network_Delegate);
+		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), null);
+//		Network_Delegate network_Delegate = (Network_Delegate)AR.AsyncState;
+//		Debug.Log (network_Delegate);
 		Debug.Log ("received " + recieved.ToString () + " bytes");
 		if(recieved <= 0)
 			return;
 
 		byte[] recData = new byte[recieved];
 		Buffer.BlockCopy(_recieveBuffer,0,recData,0,recieved);
-
-		// Notify other managers when receiving data from server
-		foreach (AsyncCallback listener in receiveListeners) {
-			listener (AR);
-		}
-
 		Packet packet = new Packet(recData);
 		packet.Print ("RECEIVED");
-		network_Delegate (packet);
+
+		// Notify other managers when receiving data from server
+		foreach (Subscriptor subscriptor in subscriptors) {
+			foreach (M2C_Command command in subscriptor.commands) {
+				if (command == packet.M2C_command) {
+					subscriptor.subscriptor_Delegate (packet);
+					break;
+				}
+			}
+		}
+
+//		network_Delegate (packet);
 	}
 
-	public int AddReceiveListener(AsyncCallback callback) {
-		int index = receiveListeners.Count;
-		receiveListeners.Add (callback);
+	public int AddSubscriptor(Subscriptor subscriptor) {
+		int index = subscriptors.Count;
+		subscriptors.Add (subscriptor);
 		return index;
 	}
 
-	public void RemoveReceiveListener(int index) {
-		receiveListeners.RemoveAt (index);
+	public void RemoveSubscriptor(int index) {
+		subscriptors.RemoveAt (index);
 	}
 
 

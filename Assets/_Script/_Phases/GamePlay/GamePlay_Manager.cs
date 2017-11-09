@@ -16,12 +16,12 @@ public class GamePlay_Manager : MonoBehaviour {
 	// when the phase begin
 	void OnEnable () {
 		isPlaying = true;
-		serverReceiveIndex = networkController.AddReceiveListener (new AsyncCallback(OnReceive));
+		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[0]));
 	}
 
 	void OnDisable () {
 		isPlaying = false;
-		networkController.RemoveReceiveListener (serverReceiveIndex);
+		networkController.RemoveSubscriptor (serverReceiveIndex);
 	}
 
 	public void Stop() {
@@ -44,7 +44,7 @@ public class GamePlay_Manager : MonoBehaviour {
 		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_CROSS, new int[6]{dirKey, 1, 1, 1, 1, (int) lastDistance * 1000}));
 	}
 
-	private void OnReceive(IAsyncResult AR) {
-		Debug.Log (AR.ToString ());
+	public void OnReceive(Packet packet) {
+
 	}
 }

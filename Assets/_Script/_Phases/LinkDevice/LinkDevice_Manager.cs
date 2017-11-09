@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +23,7 @@ public class LinkDevice_Manager : MonoBehaviour {
 
 		// 	若此邊尚未連接 -> 建立連接
 		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_LINK_KEY, new int[1]{order}));
-		networkController.ReceiveFromServer (RFS_Press_Link_Buttons);
+//		networkController.ReceiveFromServer (RFS_Press_Link_Buttons);
 
 		// 	若此邊已連接 -> 取消連接
 	}
@@ -48,7 +49,7 @@ public class LinkDevice_Manager : MonoBehaviour {
 	public void Start0(){
 		// 建立 start0 賽局
 		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_START0, new int[0]{}));
-		networkController.ReceiveFromServer (RFS_Start0);
+//		networkController.ReceiveFromServer (RFS_Start0);
 	}
 
 	public void RFS_Start0(Packet packet){
