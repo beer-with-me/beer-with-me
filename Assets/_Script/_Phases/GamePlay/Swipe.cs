@@ -5,15 +5,16 @@ using UnityEngine;
 public class Swipe : MonoBehaviour {
 	
 	public GamePlay_Manager gameplay_manager;
-	private Rigidbody rb;
+	public Rigidbody rb;
 	private Vector2 firstPressPos;
 	private Vector2 secondPressPos;
 	private bool firstPressed = false;
 	private bool isMoving = false;
-	private Vector3 initPos;
+	public  Vector3 initPos;
 	private float force = 2.0f;
 
 	void Start() {
+		gameplay_manager = GameObject.Find ("GamePlayPhase").GetComponent<GamePlay_Manager> ();
 		rb = this.gameObject.GetComponent<Rigidbody> ();
 	}
 

@@ -1,4 +1,4 @@
-public class ConnectSetup_Manager : MonoBehaviour {
+public class xxx_Manager : MonoBehaviour {
 	public GameController gameController;
 	public NetworkController networkController;
 	private int serverReceiveIndex;

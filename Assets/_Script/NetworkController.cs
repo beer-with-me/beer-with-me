@@ -14,6 +14,11 @@ public enum Data_Type{
 	SP_Float /* single_precision_float */
 }
 
+public enum NUM{
+	Integer,
+	Decimal
+}
+
 public enum C2M_Command{
 	Unsigned = 0x00,
 	C2M_CREATE = 0x20,
@@ -70,7 +75,10 @@ public class Packet{
 		version = b_d [1];
 		M2C_command = (M2C_Command)b_d[2];
 		Data_Type[] slices = Get_M2C_Packet_Slices_Sizes ();
-		datas = new int[slices.Length];
+		Pair pair = Get_Slices_Length (slices);
+		datas = new int[pair.first];
+		f_datas = new float[pair.second];
+
 		int d_pointer = 0;
 		int f_d_pointer = 0;
 		int b_d_pointer = 5;
@@ -110,7 +118,7 @@ public class Packet{
 	public byte[] Generate_b_datas(){
 		Data_Type[] slices = Get_C2M_Packet_Slices_Sizes ();
 
-		if (slices.Length != datas.Length) {
+		if (slices.Length != (datas.Length + f_datas.Length)) {
 			Debug.Log ("封包長度或參數數量錯誤\n" + C2M_command.ToString() + " ");
 			return null;
 		}
@@ -162,6 +170,15 @@ public class Packet{
 		return ret;
 	}
 
+	public Pair Get_Slices_Length(Data_Type[] slices){
+		Pair ret = new Pair ();
+		foreach (Data_Type slice in slices) {
+			if (Decide_NUM (slice) == NUM.Integer) ret.first++;
+			else ret.second++;
+		}
+		return ret;
+	}
+
 	public int Get_Bytes_Amount(Data_Type[] slices){
 		int ret = 0;
 		foreach (Data_Type slice in slices) {
@@ -169,10 +186,20 @@ public class Packet{
 			case Data_Type.Byte:			ret += 1;	break;
 			case Data_Type.Short:			ret += 2;	break;
 			case Data_Type.Unsigned_Short:	ret += 2;	break;
-			case Data_Type.SP_Float:	ret += 4;	break;
+			case Data_Type.SP_Float:		ret += 4;	break;
 			}
 		}
 		return ret;
+	}
+
+	NUM Decide_NUM(Data_Type data_Type){
+		switch (data_Type) {
+		case Data_Type.Byte:			return NUM.Integer;
+		case Data_Type.Short:			return NUM.Integer;
+		case Data_Type.Unsigned_Short:	return NUM.Integer;
+		case Data_Type.SP_Float:		return NUM.Decimal;
+		}
+		return NUM.Integer;
 	}
 
 	Data_Type[] Get_C2M_Packet_Slices_Sizes(){
@@ -207,12 +234,22 @@ public class Packet{
 	}
 
 	public void Print(string s){
-		if (datas == null || b_datas == null) {
-			Debug.Log ("datas == null || b_datas == null");
+		if (datas == null || b_datas == null || f_datas == null) {
+			Debug.Log ("datas == null || b_datas == null || f_datas == null");
+			return;
 		}
 
 		string d_string = "";
-		foreach (int d in datas)d_string += d.ToString () + ",";
+		Data_Type[] data_Types = new Data_Type[0];
+		if (C2M_command != C2M_Command.Unsigned) data_Types = Get_C2M_Packet_Slices_Sizes ();
+		if (M2C_command != M2C_Command.Unsigned) data_Types = Get_M2C_Packet_Slices_Sizes ();
+		int d_pointer = 0;
+		int f_d_pointer = 0;
+		foreach (Data_Type data_Type in data_Types) {
+			if (d_pointer + f_d_pointer > 0) d_string += ",";
+			if (Decide_NUM (data_Type) == NUM.Integer) d_string += datas [d_pointer++].ToString ();
+			else d_string += f_datas [f_d_pointer++].ToString ();
+		}
 		string b_d_string = "";
 		foreach (byte b_d in b_datas)b_d_string += String.Format ("{0:X2}", b_d) + " ";
 		Debug.Log(s + "\nversion: " + version.ToString() + "\nC2M: " + C2M_command + "\nM2C: " + M2C_command + "\ndatas: " + d_string + "\nb_datas: " + b_d_string);
@@ -313,7 +350,6 @@ public class NetworkController : MonoBehaviour {
 	private void ReceiveCallback(IAsyncResult AR)
 	{
 		int recieved = _clientSocket.EndReceive(AR);
-		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), null);
 		Debug.Log ("received " + recieved.ToString () + " bytes");
 		if(recieved <= 0)
 			return;
@@ -332,6 +368,7 @@ public class NetworkController : MonoBehaviour {
 				}
 			}
 		}
+		_clientSocket.BeginReceive(_recieveBuffer, 0, _recieveBuffer.Length,SocketFlags.None,new AsyncCallback(ReceiveCallback), null);
 	}
 
 	public int AddSubscriptor(Subscriptor subscriptor) {
