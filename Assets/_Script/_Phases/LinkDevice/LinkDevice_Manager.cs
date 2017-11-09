@@ -9,6 +9,9 @@ public class LinkDevice_Manager : MonoBehaviour {
 	public NetworkController networkController;
 	private int serverReceiveIndex;
 
+	private bool onReceive;
+	private Packet receivePacket;
+
 	public Text room_ID_text;
 	public Color init_Color;
 	public Color clicked_Color;
@@ -21,6 +24,13 @@ public class LinkDevice_Manager : MonoBehaviour {
 	}
 	void OnDisable () {
 		networkController.RemoveSubscriptor (serverReceiveIndex);
+	}
+
+	void Update(){
+		if (onReceive) {
+			AnalysisReceive (receivePacket);
+			onReceive = false;
+		}
 	}
 
 
@@ -52,6 +62,11 @@ public class LinkDevice_Manager : MonoBehaviour {
 
 
 	public void OnReceive(Packet packet) {
+		onReceive = true;
+		receivePacket = packet;
+	}
+
+	public void AnalysisReceive(Packet packet){
 		Debug.Log ("ConnectSetup receive");
 		switch (packet.M2C_command) {
 		case M2C_Command.M2C_LINK:

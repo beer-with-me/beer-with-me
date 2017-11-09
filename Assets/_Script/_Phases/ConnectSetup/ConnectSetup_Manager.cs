@@ -9,12 +9,11 @@ public class ConnectSetup_Manager : MonoBehaviour {
 	public KeyBoard_Handler keyBoard_Handler;
 	private int serverReceiveIndex;
 
-	private bool can_Setup_Game;
-	private bool can_Start_Dialog;
+	private bool onReceive;
+	private Packet receivePacket;
 
 	void OnEnable(){
-		can_Setup_Game = false;
-		can_Start_Dialog = false;
+		onReceive = false;
 		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[2]{M2C_Command.M2C_CREATE, M2C_Command.M2C_JOIN}));
 	}
 	void OnDisable () {
@@ -22,13 +21,9 @@ public class ConnectSetup_Manager : MonoBehaviour {
 	}
 
 	void Update(){
-		if (can_Setup_Game) {
-			Setup_Game ();
-			can_Setup_Game = false;
-		}
-		if (can_Start_Dialog) {
-			gameController.Start_Dialog (null, "Error", "Can't find this room.", 1);
-			can_Start_Dialog = false;
+		if (onReceive) {
+			AnalysisReceive (receivePacket);
+			onReceive = false;
 		}
 	}
 
@@ -70,6 +65,11 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 
 	public void OnReceive(Packet packet) {
+		onReceive = true;
+		receivePacket = packet;
+	}
+
+	public void AnalysisReceive(Packet packet){
 		Debug.Log ("ConnectSetup receive");
 		switch (packet.M2C_command) {
 		case M2C_Command.M2C_CREATE:
@@ -85,11 +85,11 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 	public void M2C_Join(Packet packet){
 		if (packet.datas [0] == 0) {
-			gameController.room_ID = keyBoard_Handler.room_ID;
 			// 加入成功
-			can_Setup_Game = true;
+			gameController.room_ID = keyBoard_Handler.room_ID;
+			Setup_Game();
 		} else {
-			can_Start_Dialog = true;
+			gameController.Start_Dialog (null, "Error", "Can't find this room.", 1);
 		}
 	}
 
@@ -98,8 +98,7 @@ public class ConnectSetup_Manager : MonoBehaviour {
 		gameController.room_ID = packet.datas [0];
 
 		// 創建成功
-		can_Setup_Game = true;
-//		Setup_Game();
+		Setup_Game ();
 	}
 
 
