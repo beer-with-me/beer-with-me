@@ -67,7 +67,7 @@ public class LinkDevice_Manager : MonoBehaviour {
 	}
 
 	public void AnalysisReceive(Packet packet){
-		Debug.Log ("ConnectSetup receive");
+		Debug.Log ("LinkDevice receive");
 		switch (packet.M2C_command) {
 		case M2C_Command.M2C_LINK:
 			M2C_Link (packet);

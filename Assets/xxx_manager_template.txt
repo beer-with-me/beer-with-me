@@ -1,0 +1,64 @@
+public class ConnectSetup_Manager : MonoBehaviour {
+	public GameController gameController;
+	public NetworkController networkController;
+	private int serverReceiveIndex;
+
+	private bool onReceive;
+	private Packet receivePacket;
+
+	void OnEnable(){
+		onReceive = false;
+		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[0]));
+	}
+	void OnDisable () {
+		networkController.RemoveSubscriptor (serverReceiveIndex);
+	}
+
+	void Update(){
+		if (onReceive) {
+			AnalysisReceive (receivePacket);
+			onReceive = false;
+		}
+	}
+
+
+
+	// -------------  start sending data ------------- //
+
+
+
+
+
+
+
+	// ------------- end of sending data ------------- //
+	// -------------  start receive data ------------- //
+
+
+
+	public void OnReceive(Packet packet) {
+		onReceive = true;
+		receivePacket = packet;
+	}
+
+	public void AnalysisReceive(Packet packet){
+		Debug.Log ("xxx receive");
+		switch (packet.M2C_command) {
+		case M2C_Command.M2C_CREATE:
+			M2C_Create (packet);
+			break;
+		case M2C_Command.M2C_JOIN:
+			M2C_Join (packet);
+			break;
+		default:
+			break;
+		}
+	}
+
+
+
+	// ------------- end of receive data ------------- //
+
+
+
+}
