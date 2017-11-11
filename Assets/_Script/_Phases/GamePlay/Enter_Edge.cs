@@ -9,9 +9,15 @@ public class Enter_Edge : MonoBehaviour {
 	void OnCollisionEnter(Collision collisionInfo) {
 		// Falling off the table / entering the other table
 		if (collisionInfo.gameObject.tag == "Beer") {
-			gamePlay_manager.lastDistance = Vector3.Distance (gamePlay_manager.swipe.rb.position, gamePlay_manager.swipe.initPos);
-			gamePlay_manager.isLeavingTable = true;
-			gamePlay_manager.EnterEdge (dirKey);
+			// First leave
+			if (gamePlay_manager.swipe) {
+				gamePlay_manager.lastDistance = Vector3.Distance (gamePlay_manager.swipe.rb.position, gamePlay_manager.swipe.initPos);
+				gamePlay_manager.isLeavingTable = true;
+				gamePlay_manager.EnterEdge (dirKey);
+			} else {
+				// Non-first enter
+				gamePlay_manager.swipe = collisionInfo.gameObject.GetComponent<Swipe>();
+			}
 		}
 	}
 }

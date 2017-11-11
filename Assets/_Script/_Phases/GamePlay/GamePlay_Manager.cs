@@ -5,6 +5,14 @@ using UnityEngine;
 
 
 public class GamePlay_Manager : MonoBehaviour {
+
+	private List<Vector3> directionMap = new List<Vector3>(new Vector3[] { new Vector3(0.0f, 0.0f, 0.0f),
+		new Vector3(3.3f, 0.0f, 2.5f), new Vector3(3.3f, 0.0f, -2.5f), new Vector3(0.0f, 0.0f, -5.0f),
+		new Vector3(-3.3f, 0.0f, -2.5f), new Vector3(-3.3f, 0.0f, 2.5f), new Vector3(0.0f, 0.0f, 5.0f) });
+	private List<Vector3> offsetMap = new List<Vector3>(new Vector3[] { new Vector3(0.0f, 0.0f, 0.0f),
+		new Vector3(0.0f, 0.0f, 1.25f), new Vector3(0.0f, 0.0f, 1.25f), new Vector3(1.5f, 0.0f, 0.0f),
+		new Vector3(0.0f, 0.0f, 2.5f), new Vector3(0.0f, 0.0f, 2.5f), new Vector3(1.5f, 0.0f, 0.0f) });
+	
 	public GameController gameController;
 	public NetworkController networkController;
 	private int serverReceiveIndex;
@@ -13,6 +21,7 @@ public class GamePlay_Manager : MonoBehaviour {
 
 	public Swipe swipe;
 
+	private int multiple = 20;
 	public bool isPlaying = false;
 	public float lastDistance = 0.0f;
 	public bool isLeavingTable = false;
@@ -60,7 +69,8 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	private void Cross(int dirKey) {
-		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_CROSS, new int[3]{dirKey, 1, (int) (lastDistance * 1000)}, new float[3]{beer.GetComponent<Rigidbody>().velocity.x, beer.GetComponent<Rigidbody>().velocity.y, beer.GetComponent<Rigidbody>().velocity.z}));
+		Rigidbody rb = beer.GetComponent<Rigidbody> ();
+		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_CROSS, new int[3]{dirKey, 1, (int) (lastDistance * 1000)}, new float[3]{rb.velocity.x, 0, rb.velocity.z}));
 		Destroy (beer);
 	}
 
@@ -69,7 +79,7 @@ public class GamePlay_Manager : MonoBehaviour {
 		receivePacket = packet;
 	}
 
-	public void AnalysisReceive(Packet packet){
+	public void AnalysisReceive(Packet packet) {
 		Debug.Log ("GamePlay receive");
 		switch (packet.M2C_command) {
 		case M2C_Command.M2C_CROSS:
@@ -81,6 +91,22 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	public void M2C_Cross(Packet packet){
-		
+		int dirKey = packet.datas [0];
+		int offset = packet.datas [1];
+		int distance = packet.datas [2];
+		float x = packet.f_datas [0];
+		float y = packet.f_datas [1];
+		float z = packet.f_datas [2];
+
+		beer = Instantiate (beer_prefab, directionMap[dirKey] + offsetMap[dirKey] * offset, Quaternion.Euler (new Vector3 (-90, 0, 0)));
+		beer.GetComponent<Rigidbody> ().AddForce (new Vector3 (x * multiple, 0.0f, z * multiple));
+
+		this.lastDistance += distance;
+//		Debug.Log (dirKey.ToString ());
+//		Debug.Log (offset.ToString ());
+//		Debug.Log (distance.ToString ());
+//		Debug.Log (x.ToString ());
+//		Debug.Log (y.ToString ());
+//		Debug.Log (z.ToString ());
 	}
 }
