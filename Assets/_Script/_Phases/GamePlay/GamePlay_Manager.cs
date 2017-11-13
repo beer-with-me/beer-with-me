@@ -87,6 +87,7 @@ public class GamePlay_Manager : MonoBehaviour {
 			break;
 		case M2C_Command.M2C_SCORE:
 			M2C_Score (packet);
+			break;
 		default:
 			break;
 		}
