@@ -85,6 +85,8 @@ public class GamePlay_Manager : MonoBehaviour {
 		case M2C_Command.M2C_CROSS:
 			M2C_Cross (packet);
 			break;
+		case M2C_Command.M2C_SCORE:
+			M2C_Score (packet);
 		default:
 			break;
 		}
@@ -108,5 +110,9 @@ public class GamePlay_Manager : MonoBehaviour {
 //		Debug.Log (x.ToString ());
 //		Debug.Log (y.ToString ());
 //		Debug.Log (z.ToString ());
+	}
+
+	public void M2C_Score(Packet packet){
+		gameController.Start_Dialog (null, "Score", packet.datas [1].ToString (), 1);
 	}
 }
