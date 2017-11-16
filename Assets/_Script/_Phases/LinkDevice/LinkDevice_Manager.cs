@@ -88,7 +88,8 @@ public class LinkDevice_Manager : MonoBehaviour {
 
 	public void M2C_Wait_Fire(Packet packet){
 		gameController.start_Here = (packet.datas [0] == 0) ? false : true;
-		gameController.start_Position = new Vector2(packet.datas [1], packet.datas [2]);
+//		gameController.start_Position = new Vector2(packet.datas [1], packet.datas [2]);
+		gameController.start_Position = new Vector2(0, 0);
 
 		// 向 GameController 回報階段任務完成 ， disable script
 		gameController.SwitchPhases(Phases.GamePlay);
