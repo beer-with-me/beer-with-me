@@ -38,6 +38,13 @@ public class GameController : MonoBehaviour {
 	public Camera MainCamera;
 	public Camera PlayCamera;
 
+	public float editor_height_length;
+	public float editor_width_length;
+	public float editor_dpi;
+
+	[HideInInspector] public float height_length;
+	[HideInInspector] public float width_length;
+	[HideInInspector] public float dpi;
 	[HideInInspector] public bool is_Hoster;
 	[HideInInspector] public int room_ID;
 
@@ -46,10 +53,28 @@ public class GameController : MonoBehaviour {
 
 	void Start(){
 		has_dialog = false;
+		Get_Device_Size ();
 		is_Hoster = false;
 		room_ID = -1;
 		start_Here = false;
 		SwitchPhases(Phases.ConnectSetup);
+	}
+
+	// 取得裝置大小
+	void Get_Device_Size(){
+		#if UNITY_EDITOR
+		height_length = editor_height_length;
+		width_length = editor_width_length;
+		dpi = editor_dpi;
+		#else
+		AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+		AndroidJavaObject activity = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
+		AndroidJavaObject metrics = new AndroidJavaObject("android.util.DisplayMetrics");
+		activity.Call<AndroidJavaObject>("getWindowManager").Call<AndroidJavaObject>("getDefaultDisplay").Call("getMetrics", metrics);
+		dpi = (metrics.Get<float>("xdpi") + metrics.Get<float>("ydpi")) * 0.5f;
+		height_length = Screen.height_DPI/dpi;
+		width_length = Screen.width/dpi;
+		#endif
 	}
 
 	public void SwitchPhases(Phases phase){

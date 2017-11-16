@@ -34,36 +34,14 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 
 	public void Create_Room(){
-		// 取得裝置大小
-		Vector2 device_size = Get_Device_Size();
-
 		// 向伺服端送出創建要求
-		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_CREATE, new int[2]{(int)(device_size.x * 100), (int)(device_size.y * 100)}));
+		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_CREATE, new int[2]{(int)(gameController.height_length * 100), (int)(gameController.width_length * 100)}));
 	}
 
 
 	public void Join_Room(){
-		// 取得裝置大小
-		Vector2 device_size = Get_Device_Size();
-
 		// 向伺服端送出加入要求
-		networkController.SendToServer(new Packet(gameController.version, C2M_Command.C2M_JOIN, new int[3]{keyBoard_Handler.room_ID, (int)(device_size.x * 100), (int)(device_size.y * 100)}));
-
-	}
-
-
-	// 取得裝置大小
-	Vector2 Get_Device_Size(){
-		#if UNITY_EDITOR
-			return new Vector2(2.49f, 4.42f);
-		#else
-			AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-			AndroidJavaObject activity = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
-			AndroidJavaObject metrics = new AndroidJavaObject("android.util.DisplayMetrics");
-			activity.Call<AndroidJavaObject>("getWindowManager").Call<AndroidJavaObject>("getDefaultDisplay").Call("getMetrics", metrics);
-			float dpi = (metrics.Get<float>("xdpi") + metrics.Get<float>("ydpi")) * 0.5f;
-			return new Vector2(Screen.height/dpi, Screen.width/dpi);
-		#endif
+		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_JOIN, new int[3] {keyBoard_Handler.room_ID, (int)(gameController.height_length * 100), (int)(gameController.width_length * 100)}));
 	}
 
 
