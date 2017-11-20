@@ -11,7 +11,8 @@ public class Enter_Edge : MonoBehaviour {
 		if (collisionInfo.gameObject.tag == "Beer") {
 			// First leave
 			if (gamePlay_manager.swipe) {
-				gamePlay_manager.lastDistance = Vector3.Distance (gamePlay_manager.swipe.rb.position, gamePlay_manager.swipe.initPos);
+				float distance = Vector3.Distance (gamePlay_manager.swipe.rb.position, gamePlay_manager.swipe.initPos);
+				gamePlay_manager.lastDistance += distance;
 				gamePlay_manager.isLeavingTable = true;
 				gamePlay_manager.EnterEdge (dirKey);
 			} else {

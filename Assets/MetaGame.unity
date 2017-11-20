@@ -290,6 +290,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkController: {fileID: 1718380416}
   dialog_gmo: {fileID: 1522123200245722, guid: e5014115c97b344c394609f67cc55b68, type: 2}
+  Y_dialog_gmo: {fileID: 1655422235343464, guid: d6822b051257d489fa84d91db5130626,
+    type: 2}
   has_dialog: 0
   version: 1
   now_Phase: 0

@@ -27,7 +27,8 @@ public class Swipe : MonoBehaviour {
 			}
 			if(isMoving && magnitude == 0.0f) {
 				isMoving = false;
-				gameplay_manager.lastDistance = Vector3.Distance (rb.position, initPos);
+				float distance = Vector3.Distance (rb.position, initPos);
+				gameplay_manager.lastDistance += distance;
 				gameplay_manager.Stop ();
 			}
 		}

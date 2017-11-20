@@ -59,18 +59,22 @@ public class GamePlay_Manager : MonoBehaviour {
 		}
 	}
 
+	public int GetDistance(float distance) {
+		return (int)(lastDistance * 100);
+	}
+
 	public void EnterEdge(int dirKey) {
 		Debug.Log ("Edge_" + dirKey.ToString() + " entered.");
 		Cross (dirKey);
 	}
 
 	private void BeerStop() {
-		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_BEER_STOP, new int[1]{(int) lastDistance * 1000}));
+		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_BEER_STOP, new int[1]{this.GetDistance(lastDistance)}));
 	}
 
 	private void Cross(int dirKey) {
 		Rigidbody rb = beer.GetComponent<Rigidbody> ();
-		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_CROSS, new int[3]{dirKey, 1, (int) (lastDistance * 1000)}, new float[3]{rb.velocity.x, 0, rb.velocity.z}));
+		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_CROSS, new int[3]{dirKey, 1, this.GetDistance(lastDistance)}, new float[3]{rb.velocity.x, 0, rb.velocity.z}));
 		Destroy (beer);
 	}
 
@@ -98,7 +102,7 @@ public class GamePlay_Manager : MonoBehaviour {
 		int offset = packet.datas [1];
 		int distance = packet.datas [2];
 		float x = packet.f_datas [0];
-		float y = packet.f_datas [1];
+		// float y = packet.f_datas [1];
 		float z = packet.f_datas [2];
 
 		beer = Instantiate (beer_prefab, directionMap[dirKey] + offsetMap[dirKey] * offset, Quaternion.Euler (new Vector3 (-90, 0, 0)));
