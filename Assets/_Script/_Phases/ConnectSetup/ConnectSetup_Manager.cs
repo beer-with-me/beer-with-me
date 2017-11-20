@@ -76,7 +76,7 @@ public class ConnectSetup_Manager : MonoBehaviour {
 			gameController.room_ID = keyBoard_Handler.room_ID;
 			Setup_Game();
 		} else {
-			gameController.Start_Dialog (null, "Error", "Can't find this room.", 1);
+			gameController.Start_Dialog (null, "Error", "Can't find this room.", 1, 0);
 		}
 	}
 

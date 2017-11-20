@@ -24,6 +24,7 @@ public class GameController : MonoBehaviour {
 	public NetworkController networkController;
 
 	public GameObject dialog_gmo;
+	public GameObject Y_dialog_gmo;
 	public Dialog_Delegate dialog_Delegate;
 	public bool has_dialog;
 
@@ -93,10 +94,10 @@ public class GameController : MonoBehaviour {
 		MainCamera.enabled = phase != Phases.GamePlay;
 	}
 
-	public void Start_Dialog(Dialog_Delegate d, string title, string content, int options_amount){
+	public void Start_Dialog(Dialog_Delegate d, string title, string content, int options_amount, int dir){ // dir=1 -> Y
 		if (has_dialog) return;
 		has_dialog = true;
-		GameObject dialog = Instantiate (dialog_gmo, Vector2.zero, Quaternion.identity);
+		GameObject dialog = Instantiate ((dir == 0) ? dialog_gmo : Y_dialog_gmo, Vector2.zero, Quaternion.Euler(90 * dir, 0, 0));
 		dialog.GetComponent<Dialog_manager> ().dialog_Delegate = d;
 		dialog.GetComponent<Dialog_manager> ().options_amount = options_amount;
 		dialog.transform.Find ("canvas").Find ("Title").GetComponent<Text> ().text = title;

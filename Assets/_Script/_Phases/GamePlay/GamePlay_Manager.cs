@@ -114,6 +114,6 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	public void M2C_Score(Packet packet){
-		gameController.Start_Dialog (null, "Score", packet.datas [1].ToString (), 1);
+		gameController.Start_Dialog (null, "Score", packet.datas [1].ToString (), 1, 1);
 	}
 }
