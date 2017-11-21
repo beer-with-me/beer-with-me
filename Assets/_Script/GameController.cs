@@ -73,7 +73,7 @@ public class GameController : MonoBehaviour {
 		AndroidJavaObject metrics = new AndroidJavaObject("android.util.DisplayMetrics");
 		activity.Call<AndroidJavaObject>("getWindowManager").Call<AndroidJavaObject>("getDefaultDisplay").Call("getMetrics", metrics);
 		dpi = (metrics.Get<float>("xdpi") + metrics.Get<float>("ydpi")) * 0.5f;
-		height_length = Screen.height_DPI/dpi;
+		height_length = Screen.height/dpi;
 		width_length = Screen.width/dpi;
 		#endif
 	}
