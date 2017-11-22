@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class GamePlay_Manager : MonoBehaviour {
@@ -117,7 +118,11 @@ public class GamePlay_Manager : MonoBehaviour {
 //		Debug.Log (z.ToString ());
 	}
 
+	public void OnPressOk(bool ok) {
+		SceneManager.LoadScene(0);
+	}
+
 	public void M2C_Score(Packet packet){
-		gameController.Start_Dialog (null, "Score", packet.datas [1].ToString (), 1, 1);
+		gameController.Start_Dialog (OnPressOk, "Score", packet.datas [1].ToString (), 1, 1);
 	}
 }
