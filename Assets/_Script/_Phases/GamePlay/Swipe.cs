@@ -7,11 +7,12 @@ public class Swipe : MonoBehaviour {
 	public GamePlay_Manager gameplay_manager;
 	public Rigidbody rb;
 	private Vector2 firstPressPos;
+	private float firstPressTime;
 	private Vector2 secondPressPos;
+	private float secondPressTime;
 	private bool firstPressed = false;
 	private bool isMoving = false;
 	public  Vector3 initPos;
-	private float force = 2.0f;
 
 	void Start() {
 		gameplay_manager = GameObject.Find ("GamePlayPhase").GetComponent<GamePlay_Manager> ();
@@ -45,11 +46,12 @@ public class Swipe : MonoBehaviour {
 	public void SwipeHandlerDesktop() {
 		if(Input.GetMouseButtonDown(0)) {
 			firstPressPos = new Vector2(Input.mousePosition.x,Input.mousePosition.y);
+			firstPressTime = Time.time;
 			firstPressed = true;
 		}
 		if(Input.GetMouseButtonUp(0) && firstPressed) {
 			secondPressPos = new Vector2(Input.mousePosition.x,Input.mousePosition.y);
-			MoveObject (firstPressPos, secondPressPos);
+			MoveObject ();
 			firstPressed = false;
 		}
 	}
@@ -60,20 +62,27 @@ public class Swipe : MonoBehaviour {
 			Touch t = Input.GetTouch(0);
 			if(t.phase == TouchPhase.Began) {
 				firstPressPos = new Vector2(t.position.x,t.position.y);
+				firstPressTime = Time.time;
 				firstPressed = true;
 			}
 			if(t.phase == TouchPhase.Ended && firstPressed) {
 				secondPressPos = new Vector2(t.position.x,t.position.y);
-				MoveObject (firstPressPos, secondPressPos);
+				MoveObject ();
 				firstPressed = false;
 			}
 		}
 	}
 
-	private void MoveObject (Vector2 firstPressPos, Vector2 secondPressPos) {
+	private void MoveObject () {
 		Vector2 currentSwipe = new Vector3(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
+		float deltaTime = Time.time - firstPressTime;
 		initPos = rb.position;
+		float force = Sigmoid (Mathf.Pow(1 / deltaTime, 2));
 		rb.AddForce (new Vector3 (currentSwipe.x * force, 0, currentSwipe.y * force));
+	}
+
+	private float Sigmoid(float x) {
+		return 2 / (1 + Mathf.Exp(-2 * x)) - 1;
 	}
 		
 }
