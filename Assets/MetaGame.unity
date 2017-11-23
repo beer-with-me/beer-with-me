@@ -379,6 +379,41 @@ Prefab:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1066740352}
+    - target: {fileID: 1530372131260368, guid: 3f6365f95e50442739b1d5890613f6a9, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 223667628773325276, guid: 3f6365f95e50442739b1d5890613f6a9,
+        type: 2}
+      propertyPath: m_PixelPerfect
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114625432950964156, guid: 3f6365f95e50442739b1d5890613f6a9,
+        type: 2}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4519474014376338, guid: 3f6365f95e50442739b1d5890613f6a9, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 48
+      objectReference: {fileID: 0}
+    - target: {fileID: 4519474014376338, guid: 3f6365f95e50442739b1d5890613f6a9, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -246
+      objectReference: {fileID: 0}
+    - target: {fileID: 4253652638323048, guid: 3f6365f95e50442739b1d5890613f6a9, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1.5699999
+      objectReference: {fileID: 0}
+    - target: {fileID: 4348864410718796, guid: 3f6365f95e50442739b1d5890613f6a9, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 2.57
+      objectReference: {fileID: 0}
+    - target: {fileID: 224449874906516436, guid: 3f6365f95e50442739b1d5890613f6a9,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 70
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3f6365f95e50442739b1d5890613f6a9, type: 2}
   m_IsPrefabParent: 0
