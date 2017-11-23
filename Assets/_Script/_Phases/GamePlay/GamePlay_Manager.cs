@@ -32,7 +32,10 @@ public class GamePlay_Manager : MonoBehaviour {
 
 	// when the phase begin
 	void OnEnable () {
+		multiple = 20;
 		isPlaying = true;
+		lastDistance = 0.0f;
+		isLeavingTable = false;
 		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[2]{M2C_Command.M2C_CROSS, M2C_Command.M2C_SCORE}));
 		if (gameController.start_Here) {
 			beer = Instantiate (beer_prefab, gameController.start_Position, Quaternion.Euler (new Vector3 (-90, 0, 0)));
@@ -119,10 +122,11 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	public void OnPressOk(bool ok) {
-		SceneManager.LoadScene(0);
+		Destroy (beer);
+		gameController.SwitchPhases(Phases.LinkDevice);
 	}
 
 	public void M2C_Score(Packet packet){
-		gameController.Start_Dialog (OnPressOk, "Score", packet.datas [1].ToString (), 1, 1);
+		gameController.Start_Dialog (OnPressOk, "Score", packet.datas [1].ToString (), 1);
 	}
 }
