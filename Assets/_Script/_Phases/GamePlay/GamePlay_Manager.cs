@@ -123,10 +123,15 @@ public class GamePlay_Manager : MonoBehaviour {
 
 	public void OnPressOk(bool ok) {
 		Destroy (beer);
-		gameController.SwitchPhases(Phases.LinkDevice);
+		if (ok) {
+			gameController.SwitchPhases (Phases.LinkDevice);
+		} else {
+			SceneManager.LoadScene(0);
+		}
+
 	}
 
 	public void M2C_Score(Packet packet){
-		gameController.Start_Dialog (OnPressOk, "Score", packet.datas [1].ToString (), 1);
+		gameController.Start_Dialog (OnPressOk, "Score", packet.datas [1].ToString (), 2);
 	}
 }
