@@ -77,7 +77,7 @@ public class Swipe : MonoBehaviour {
 		Vector2 currentSwipe = new Vector3(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
 		float deltaTime = Time.time - firstPressTime;
 		initPos = rb.position;
-		float force = Sigmoid (Mathf.Pow(1 / deltaTime, 2));
+		float force = Sigmoid (Mathf.Pow(1 / deltaTime, 2)) * gameplay_manager.forceMultiplication;
 		rb.AddForce (new Vector3 (currentSwipe.x * force, 0, currentSwipe.y * force));
 	}
 

@@ -77,11 +77,11 @@ public class GameController : MonoBehaviour {
 
 	// 取得裝置大小
 	void Get_Device_Size(){
-//		#if UNITY_EDITOR
-//		height_length = editor_height_length;
-//		width_length = editor_width_length;
-//		dpi = editor_dpi;
-//		#else
+		#if UNITY_EDITOR
+		dpi = Screen.dpi;
+		height_length = Screen.height / dpi;
+		width_length = Screen.width / dpi;
+		#else
 //		AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
 //		AndroidJavaObject activity = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
 //		AndroidJavaObject metrics = new AndroidJavaObject("android.util.DisplayMetrics");
@@ -89,10 +89,10 @@ public class GameController : MonoBehaviour {
 //		dpi = (metrics.Get<float>("xdpi") + metrics.Get<float>("ydpi")) * 0.5f;
 //		height_length = Screen.height/dpi;
 //		width_length = Screen.width/dpi;
-//		#endif
 		dpi = Screen.dpi;
-		height_length = Screen.height / dpi;
-		width_length = Screen.width / dpi;
+		height_length = Screen.height / dpi * 4;
+		width_length = Screen.width / dpi * 4;
+		#endif
 	}
 
 	public void SwitchPhases(Phases phase){

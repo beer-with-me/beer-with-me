@@ -7,12 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class GamePlay_Manager : MonoBehaviour {
 
-	private List<Vector3> directionMap = new List<Vector3>(new Vector3[] { new Vector3(0.0f, 0.0f, 0.0f),
-		new Vector3(3.3f, 0.0f, 2.5f), new Vector3(3.3f, 0.0f, -2.5f), new Vector3(0.0f, 0.0f, -5.0f),
-		new Vector3(-3.3f, 0.0f, -2.5f), new Vector3(-3.3f, 0.0f, 2.5f), new Vector3(0.0f, 0.0f, 5.0f) });
-	private List<Vector3> offsetMap = new List<Vector3>(new Vector3[] { new Vector3(0.0f, 0.0f, 0.0f),
-		new Vector3(0.0f, 0.0f, 1.25f), new Vector3(0.0f, 0.0f, 1.25f), new Vector3(1.5f, 0.0f, 0.0f),
-		new Vector3(0.0f, 0.0f, 2.5f), new Vector3(0.0f, 0.0f, 2.5f), new Vector3(1.5f, 0.0f, 0.0f) });
+	private List<Vector3> directionMap;
+	private List<Vector3> offsetMap;
 	
 	public GameController gameController;
 	public NetworkController networkController;
@@ -22,7 +18,7 @@ public class GamePlay_Manager : MonoBehaviour {
 
 	public Swipe swipe;
 
-	private int multiple = 20;
+	public int forceMultiplication = 0;
 	public bool isPlaying = false;
 	public float lastDistance = 0.0f;
 	public bool isLeavingTable = false;
@@ -31,22 +27,34 @@ public class GamePlay_Manager : MonoBehaviour {
 	public GameObject table;
 	public Camera mainCamera;
 	private GameObject beer;
+	private GameObject parent;
+	private float tableWidth;
+	private float tableHeight;
 
 	// when the phase begin
 	void OnEnable () {
-		if (gameController.width_length != 0) {
-			table.transform.localScale = new Vector3 (gameController.width_length, 1, gameController.height_length);
-			mainCamera.orthographicSize = gameController.width_length * gameController.height_length / 2;
-		}
-			
-		multiple = 20;
+		mainCamera.orthographicSize = gameController.width_length * gameController.height_length / 2;
+		table.transform.localScale = new Vector3 (gameController.width_length, 1, gameController.height_length);
+		tableWidth = table.GetComponent<MeshRenderer> ().bounds.size.x;
+		tableHeight = table.GetComponent<MeshRenderer> ().bounds.size.z;
+		float xAdjust = tableWidth / 2;
+		float zAdjust = tableHeight / 2;
+		directionMap = new List<Vector3>(new Vector3[] { new Vector3(0, 0, 0),
+			new Vector3(xAdjust, 0, zAdjust / 2), new Vector3(xAdjust, 0, -zAdjust / 2), new Vector3(0, 0, -zAdjust),
+			new Vector3(-xAdjust, 0, -zAdjust / 2), new Vector3(-xAdjust, 0, zAdjust / 2), new Vector3(0, 0, zAdjust) });
+		offsetMap = new List<Vector3>(new Vector3[] { new Vector3(0, 0, 0),
+			new Vector3(0, 0, 1), new Vector3(0, 0, 1), new Vector3(1, 0, 0),
+			new Vector3(0, 0, 1), new Vector3(0, 0, 1), new Vector3(1, 0, 0) });
+
+		parent = GameObject.Find ("GamePlayPhase");
 		isPlaying = true;
 		lastDistance = 0.0f;
+		forceMultiplication = 20;
 		isLeavingTable = false;
 		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[2]{M2C_Command.M2C_CROSS, M2C_Command.M2C_SCORE}));
 		if (gameController.start_Here) {
-			beer = Instantiate (beer_prefab, gameController.start_Position, Quaternion.Euler (new Vector3 (-90, 0, 0)));
-			beer.transform.parent = GameObject.Find ("GamePlayPhase").transform;
+			beer = Instantiate (beer_prefab, gameController.start_Position, Quaternion.Euler (new Vector3 (-90, 0, 0)), parent.transform);
+			RepopulateBeer (beer);
 			swipe = beer.GetComponent<Swipe> ();
 		}
 	}
@@ -71,21 +79,21 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	public int GetDistance(float distance) {
-		return (int)(lastDistance * 100);
+		return (int)(lastDistance * 10);
 	}
 
-	public void EnterEdge(int dirKey) {
-		Debug.Log ("Edge_" + dirKey.ToString() + " entered.");
-		Cross (dirKey);
+	public void EnterEdge(int dirKey, float offset) {
+		Debug.Log ("Edge_" + dirKey.ToString() + " entered from offset " + offset.ToString());
+		Cross (dirKey, offset);
 	}
 
 	private void BeerStop() {
 		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_BEER_STOP, new int[1]{this.GetDistance(lastDistance)}));
 	}
 
-	private void Cross(int dirKey) {
+	private void Cross(int dirKey, float offset) {
 		Rigidbody rb = beer.GetComponent<Rigidbody> ();
-		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_CROSS, new int[3]{dirKey, 1, this.GetDistance(lastDistance)}, new float[3]{rb.velocity.x, 0, rb.velocity.z}));
+		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_CROSS, new int[3]{dirKey, Mathf.RoundToInt(offset), this.GetDistance(lastDistance)}, new float[3]{rb.velocity.x, 0, rb.velocity.z}));
 		Destroy (beer);
 	}
 
@@ -113,19 +121,19 @@ public class GamePlay_Manager : MonoBehaviour {
 		int offset = packet.datas [1];
 		int distance = packet.datas [2];
 		float x = packet.f_datas [0];
-		// float y = packet.f_datas [1];
 		float z = packet.f_datas [2];
-
-		beer = Instantiate (beer_prefab, directionMap[dirKey] + offsetMap[dirKey] * offset, Quaternion.Euler (new Vector3 (-90, 0, 0)));
-		beer.GetComponent<Rigidbody> ().AddForce (new Vector3 (x * multiple, 0.0f, z * multiple));
+		Vector3 new_position = directionMap [dirKey] + (offsetMap [dirKey] * offset);
+		beer = Instantiate (beer_prefab, new_position, Quaternion.Euler (new Vector3 (-90, 0, 0)), parent.transform);
+		RepopulateBeer (beer);
+		beer.GetComponent<Rigidbody> ().AddForce (new Vector3 (x * forceMultiplication, 0.0f, z * forceMultiplication));
 
 		this.lastDistance += distance;
-//		Debug.Log (dirKey.ToString ());
-//		Debug.Log (offset.ToString ());
-//		Debug.Log (distance.ToString ());
-//		Debug.Log (x.ToString ());
-//		Debug.Log (y.ToString ());
-//		Debug.Log (z.ToString ());
+	}
+
+	private void RepopulateBeer(GameObject beer) {
+		Vector3 scale = beer.transform.localScale;
+		beer.transform.localScale = new Vector3 (scale.x * 10, scale.y * 10, scale.z * 10);
+		beer.transform.position += new Vector3 (0, 0.5f, 0);
 	}
 
 	public void OnPressOk(bool ok) {
