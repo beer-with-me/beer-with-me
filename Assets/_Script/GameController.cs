@@ -35,6 +35,7 @@ public class GameController : MonoBehaviour {
 	public GameObject gameSetup_gmo;
 	public GameObject gamePlay_gmo;
 	public GameObject gameSettle_gmo;
+	public Camera mainCamera;
 
 	public float editor_height_length;
 	public float editor_width_length;
@@ -93,6 +94,7 @@ public class GameController : MonoBehaviour {
 		height_length = Screen.height / dpi * 4;
 		width_length = Screen.width / dpi * 4;
 		#endif
+		mainCamera.orthographicSize = width_length * height_length / 2;
 	}
 
 	public void SwitchPhases(Phases phase){
