@@ -6,7 +6,7 @@ public class Click_Link_Block : MonoBehaviour {
 	public LinkDevice_Manager linkDevice_Manager;
 	public int order;
 
-	void OnMouseUp(){
+	public void OnMouseUp(){
 		linkDevice_Manager.Press_Link_Buttons(order);
 	}
 }

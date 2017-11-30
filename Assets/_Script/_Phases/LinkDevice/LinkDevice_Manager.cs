@@ -102,14 +102,14 @@ public class LinkDevice_Manager : MonoBehaviour {
 
 
 	public void Change_Color(int dir, Color color){
-		link_Blocks [dir - 1].GetComponent<SpriteRenderer> ().color = color;
+		link_Blocks [dir - 1].GetComponent<Image> ().color = color;
 	}
 
 	void Draw_Clicked_Color(int order){
 		for (int i = 0; i < 6; i++) {
-			if (link_Blocks [i].GetComponent<SpriteRenderer> ().color == clicked_Color) link_Blocks [i].GetComponent<SpriteRenderer> ().color = init_Color;
+			if (link_Blocks [i].GetComponent<Image> ().color == clicked_Color) link_Blocks [i].GetComponent<Image> ().color = init_Color;
 		}
 
-		link_Blocks [order - 1].GetComponent<SpriteRenderer> ().color = clicked_Color;
+		link_Blocks [order - 1].GetComponent<Image> ().color = clicked_Color;
 	}
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Click_Start0 : MonoBehaviour {
 	public LinkDevice_Manager linkDevice_Manager;
 
-	void OnMouseDown(){
+	public void OnMouseDown(){
 		linkDevice_Manager.Start0 ();
 	}
 }
