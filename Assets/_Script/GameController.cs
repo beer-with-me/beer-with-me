@@ -106,6 +106,9 @@ public class GameController : MonoBehaviour {
 		if (has_dialog) return;
 		has_dialog = true;
 		GameObject dialog = Instantiate (Y_dialog_gmo, Vector2.zero, Quaternion.Euler(90, 0, 0));
+		Vector3 scale = dialog.transform.localScale;
+		float ratio = width_length / scale.x;
+		dialog.transform.localScale = new Vector3 (scale.x * ratio, scale.y * ratio, scale.z * ratio);
 		dialog.GetComponent<Dialog_manager> ().dialog_Delegate = d;
 		dialog.GetComponent<Dialog_manager> ().options_amount = options_amount;
 		dialog.transform.Find ("canvas").Find ("Title").GetComponent<Text> ().text = title;
