@@ -28,10 +28,17 @@ public class GamePlay_Manager : MonoBehaviour {
 	public bool isLeavingTable = false;
 
 	public GameObject beer_prefab;
+	public GameObject table;
+	public Camera mainCamera;
 	private GameObject beer;
 
 	// when the phase begin
 	void OnEnable () {
+		if (gameController.width_length != 0) {
+			table.transform.localScale = new Vector3 (gameController.width_length, 1, gameController.height_length);
+			mainCamera.orthographicSize = gameController.width_length * gameController.height_length / 2;
+		}
+			
 		multiple = 20;
 		isPlaying = true;
 		lastDistance = 0.0f;

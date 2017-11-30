@@ -77,19 +77,22 @@ public class GameController : MonoBehaviour {
 
 	// 取得裝置大小
 	void Get_Device_Size(){
-		#if UNITY_EDITOR
-		height_length = editor_height_length;
-		width_length = editor_width_length;
-		dpi = editor_dpi;
-		#else
-		AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-		AndroidJavaObject activity = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
-		AndroidJavaObject metrics = new AndroidJavaObject("android.util.DisplayMetrics");
-		activity.Call<AndroidJavaObject>("getWindowManager").Call<AndroidJavaObject>("getDefaultDisplay").Call("getMetrics", metrics);
-		dpi = (metrics.Get<float>("xdpi") + metrics.Get<float>("ydpi")) * 0.5f;
-		height_length = Screen.height/dpi;
-		width_length = Screen.width/dpi;
-		#endif
+//		#if UNITY_EDITOR
+//		height_length = editor_height_length;
+//		width_length = editor_width_length;
+//		dpi = editor_dpi;
+//		#else
+//		AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+//		AndroidJavaObject activity = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
+//		AndroidJavaObject metrics = new AndroidJavaObject("android.util.DisplayMetrics");
+//		activity.Call<AndroidJavaObject>("getWindowManager").Call<AndroidJavaObject>("getDefaultDisplay").Call("getMetrics", metrics);
+//		dpi = (metrics.Get<float>("xdpi") + metrics.Get<float>("ydpi")) * 0.5f;
+//		height_length = Screen.height/dpi;
+//		width_length = Screen.width/dpi;
+//		#endif
+		dpi = Screen.dpi;
+		height_length = Screen.height / dpi;
+		width_length = Screen.width / dpi;
 	}
 
 	public void SwitchPhases(Phases phase){
