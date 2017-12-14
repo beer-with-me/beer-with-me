@@ -7,9 +7,7 @@ using UnityEngine.UI;
 public enum Phases{
 	ConnectSetup,
 	LinkDevice,
-	GameSetup,
-	GamePlay,
-	GameSettle
+	GamePlay
 }
 
 public delegate void Dialog_Delegate(bool option);
@@ -32,9 +30,7 @@ public class GameController : MonoBehaviour {
 	public bool phase_has_change;
 	public GameObject connectSetup_gmo;
 	public GameObject linkDevice_gmo;
-	public GameObject gameSetup_gmo;
 	public GameObject gamePlay_gmo;
-	public GameObject gameSettle_gmo;
 	public Camera mainCamera;
 
 	public float editor_height_length;
@@ -48,6 +44,7 @@ public class GameController : MonoBehaviour {
 	[HideInInspector] public int room_ID;
 
 	[HideInInspector] public bool start_Here;
+	[HideInInspector] public bool square_Here;
 	[HideInInspector] public Vector2 start_Position;
 
 	void Start(){
@@ -56,6 +53,7 @@ public class GameController : MonoBehaviour {
 		is_Hoster = false;
 		room_ID = -1;
 		start_Here = false;
+		square_Here = false;
 		phase_has_change = false;
 		SwitchPhases(Phases.ConnectSetup);
 	}
@@ -63,16 +61,9 @@ public class GameController : MonoBehaviour {
 	void Update(){
 		if (phase_has_change) {
 			phase_has_change = false;
-			connectSetup_gmo.SetActive (false);
-			linkDevice_gmo.SetActive (false);
-			gameSetup_gmo.SetActive (false);
-			gamePlay_gmo.SetActive (false);
-			gameSettle_gmo.SetActive (false);
-			if(now_Phase == Phases.ConnectSetup) 	connectSetup_gmo.SetActive (true);
-			if(now_Phase == Phases.LinkDevice) 		linkDevice_gmo.SetActive (true);
-			if(now_Phase == Phases.GameSetup) 		gameSetup_gmo.SetActive (true);
-			if(now_Phase == Phases.GamePlay)		gamePlay_gmo.SetActive (true);
-			if(now_Phase == Phases.GameSettle)		gameSettle_gmo.SetActive (true);
+			connectSetup_gmo.SetActive (now_Phase == Phases.ConnectSetup);
+			linkDevice_gmo.SetActive (now_Phase == Phases.LinkDevice);
+			gamePlay_gmo.SetActive (now_Phase == Phases.GamePlay);
 		}
 	}
 

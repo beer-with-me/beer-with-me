@@ -25,6 +25,7 @@ public enum C2M_Command{
 	C2M_JOIN = 0x22,
 	C2M_LINK_KEY = 0x30,
 	C2M_START0 = 0x40,
+	C2M_C2M_RETRY = 0x50,
 	C2M_CROSS = 0x60,
 	C2M_BEER_STOP = 0x61,
 	C2M_PING = 0x70,
@@ -208,6 +209,7 @@ public class Packet{
 		case C2M_Command.C2M_JOIN:		return new Data_Type[3]{ Data_Type.Unsigned_Short, Data_Type.Short, Data_Type.Short };
 		case C2M_Command.C2M_LINK_KEY:	return new Data_Type[1]{ Data_Type.Byte };
 		case C2M_Command.C2M_START0:	return new Data_Type[0]{};
+		case C2M_Command.C2M_C2M_RETRY:	return new Data_Type[0]{};
 		case C2M_Command.C2M_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Short, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.Short };
 		case C2M_Command.C2M_BEER_STOP:	return new Data_Type[1]{ Data_Type.Short };
 		case C2M_Command.C2M_PING:		return new Data_Type[0]{};

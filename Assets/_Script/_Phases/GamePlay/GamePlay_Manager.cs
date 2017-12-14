@@ -31,6 +31,9 @@ public class GamePlay_Manager : MonoBehaviour {
 	private float tableWidth;
 	private float tableHeight;
 
+	public Transform objects_Folder;
+	public GameObject square_gmo;
+
 	// when the phase begin
 	void OnEnable () {
 		mainCamera.orthographicSize = gameController.width_length * gameController.height_length / 2;
@@ -52,10 +55,18 @@ public class GamePlay_Manager : MonoBehaviour {
 		forceMultiplication = 20;
 		isLeavingTable = false;
 		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[2]{M2C_Command.M2C_CROSS, M2C_Command.M2C_SCORE}));
+
+		Init_Table ();
+	}
+
+	void Init_Table(){
 		if (gameController.start_Here) {
 			beer = Instantiate (beer_prefab, gameController.start_Position, Quaternion.Euler (new Vector3 (-90, 0, 0)), parent.transform);
 			RepopulateBeer (beer);
 			swipe = beer.GetComponent<Swipe> ();
+		}
+		if (gameController.square_Here) {
+			Instantiate (square_gmo, new Vector3(0, 20, 0), Quaternion.identity, objects_Folder);
 		}
 	}
 

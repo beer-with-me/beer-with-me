@@ -88,6 +88,7 @@ public class LinkDevice_Manager : MonoBehaviour {
 
 	public void M2C_Wait_Fire(Packet packet){
 		gameController.start_Here = (packet.datas [0] == 1) ? true : false;
+		gameController.square_Here = (packet.datas [0] == 2) ? true : false;
 //		gameController.start_Position = new Vector2(packet.datas [1], packet.datas [2]);
 		gameController.start_Position = new Vector2(0, 0);
 
