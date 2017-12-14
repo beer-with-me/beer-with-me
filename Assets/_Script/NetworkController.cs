@@ -11,6 +11,7 @@ public enum Data_Type{
 	Byte,
 	Short,
 	Unsigned_Short,
+	Int,
 	SP_Float /* single_precision_float */
 }
 
@@ -85,6 +86,7 @@ public class Packet{
 		int b_d_pointer = 5;
 		for(int i=0;i<slices.Length;i++){
 			int num = 0; 
+			long long_ = 0;
 			byte[] bytes = new byte[0];
 			switch (slices [i]) {
 			case Data_Type.Byte:
@@ -95,6 +97,13 @@ public class Packet{
 				num =  b_d [b_d_pointer++];
 				num += b_d [b_d_pointer++] * 256;
 				datas [d_pointer++] = (num >= 32768) ? num - 65536 : num;
+				break;
+			case Data_Type.Int:
+				long_ =  b_d [b_d_pointer++];
+				long_ += b_d [b_d_pointer++] * 256;
+				long_ += b_d [b_d_pointer++] * 256 * 256;
+				long_ += b_d [b_d_pointer++] * 256 * 256 * 256;
+				datas [d_pointer++] = (int)((long_ >= 2147483648) ? long_ - 4294967296 : long_);
 				break;
 			case Data_Type.Unsigned_Short:
 				num =  b_d [b_d_pointer++];
@@ -136,6 +145,7 @@ public class Packet{
 		int b_d_pointer = 5;
 		for(int i=0;i<slices.Length;i++){
 			int num = 0;
+			long _long = 0;
 			float f = 0.0f;
 			switch (slices [i]) {
 			case Data_Type.Byte:
@@ -147,6 +157,12 @@ public class Packet{
 				num = datas [d_pointer] + ((datas [d_pointer] > 0) ? 0 : 65536);
 				ret [b_d_pointer++] = System.Convert.ToByte (num % 256);
 				ret [b_d_pointer++] = System.Convert.ToByte (num / 256);
+				d_pointer++;
+				break;
+			case Data_Type.Int:
+				_long = datas [d_pointer] + ((datas [d_pointer] > 0) ? 0 : 4294967296);
+				ret [b_d_pointer++] = System.Convert.ToByte (_long % 256);	_long /= 256;
+				ret [b_d_pointer++] = System.Convert.ToByte (_long % 256);	_long /= 256;
 				d_pointer++;
 				break;
 			case Data_Type.Unsigned_Short:
@@ -186,6 +202,7 @@ public class Packet{
 			switch (slice) {
 			case Data_Type.Byte:			ret += 1;	break;
 			case Data_Type.Short:			ret += 2;	break;
+			case Data_Type.Int:				ret += 4;	break;
 			case Data_Type.Unsigned_Short:	ret += 2;	break;
 			case Data_Type.SP_Float:		ret += 4;	break;
 			}
@@ -197,6 +214,7 @@ public class Packet{
 		switch (data_Type) {
 		case Data_Type.Byte:			return NUM.Integer;
 		case Data_Type.Short:			return NUM.Integer;
+		case Data_Type.Int:				return NUM.Integer;
 		case Data_Type.Unsigned_Short:	return NUM.Integer;
 		case Data_Type.SP_Float:		return NUM.Decimal;
 		}
