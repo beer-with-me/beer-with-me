@@ -7,7 +7,8 @@ using UnityEngine.UI;
 public enum Phases{
 	ConnectSetup,
 	LinkDevice,
-	GamePlay
+	GamePlay,
+	Replay
 }
 
 public delegate void Dialog_Delegate(bool option);
@@ -31,7 +32,9 @@ public class GameController : MonoBehaviour {
 	public GameObject connectSetup_gmo;
 	public GameObject linkDevice_gmo;
 	public GameObject gamePlay_gmo;
+	public GameObject replay_gmo;
 	public Camera mainCamera;
+	public Camera replayCamera;
 
 	public float editor_height_length;
 	public float editor_width_length;
@@ -64,6 +67,14 @@ public class GameController : MonoBehaviour {
 			connectSetup_gmo.SetActive (now_Phase == Phases.ConnectSetup);
 			linkDevice_gmo.SetActive (now_Phase == Phases.LinkDevice);
 			gamePlay_gmo.SetActive (now_Phase == Phases.GamePlay);
+			replay_gmo.SetActive (now_Phase == Phases.Replay);
+			if (now_Phase == Phases.Replay) {
+				mainCamera.gameObject.SetActive (false);
+				replayCamera.gameObject.SetActive (true);
+			} else {
+				mainCamera.gameObject.SetActive (true);
+				replayCamera.gameObject.SetActive (false);
+			}
 		}
 	}
 

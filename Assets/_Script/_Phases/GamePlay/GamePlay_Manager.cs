@@ -22,6 +22,7 @@ public class GamePlay_Manager : MonoBehaviour {
 	public bool isPlaying = false;
 	public float lastDistance = 0.0f;
 	public bool isLeavingTable = false;
+	public bool isSuccessful = false;
 
 	public GameObject beer_prefab;
 	public GameObject table;
@@ -54,6 +55,7 @@ public class GamePlay_Manager : MonoBehaviour {
 		lastDistance = 0.0f;
 		forceMultiplication = 20;
 		isLeavingTable = false;
+		isSuccessful = false;
 		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[2]{M2C_Command.M2C_CROSS, M2C_Command.M2C_SCORE}));
 
 		Init_Table ();
@@ -108,11 +110,30 @@ public class GamePlay_Manager : MonoBehaviour {
 		Destroy (beer);
 	}
 
+	private void GameOver() {
+		gameController.SwitchPhases (Phases.Replay);
+	}
+		
+	private void RepopulateBeer(GameObject beer) {
+		Vector3 scale = beer.transform.localScale;
+		beer.transform.localScale = new Vector3 (scale.x * 10, scale.y * 10, scale.z * 10);
+		beer.transform.position += new Vector3 (0, 0.5f, 0);
+	}
+
+	public void OnPressOk(bool ok) {
+		Destroy (beer);
+		if (ok) {
+			gameController.SwitchPhases (Phases.LinkDevice);
+		} else {
+			SceneManager.LoadScene(0);
+		}
+	}
+		
 	public void OnReceive(Packet packet) {
 		onReceive = true;
 		receivePacket = packet;
 	}
-
+		
 	public void AnalysisReceive(Packet packet) {
 		Debug.Log ("GamePlay receive");
 		switch (packet.M2C_command) {
@@ -141,23 +162,9 @@ public class GamePlay_Manager : MonoBehaviour {
 		this.lastDistance += distance;
 	}
 
-	private void RepopulateBeer(GameObject beer) {
-		Vector3 scale = beer.transform.localScale;
-		beer.transform.localScale = new Vector3 (scale.x * 10, scale.y * 10, scale.z * 10);
-		beer.transform.position += new Vector3 (0, 0.5f, 0);
-	}
-
-	public void OnPressOk(bool ok) {
-		Destroy (beer);
-		if (ok) {
-			gameController.SwitchPhases (Phases.LinkDevice);
-		} else {
-			SceneManager.LoadScene(0);
-		}
-
-	}
 
 	public void M2C_Score(Packet packet){
-		gameController.Start_Dialog (OnPressOk, "Score", packet.datas [1].ToString (), 2);
+		isSuccessful = packet.datas [1] != 0;
+		GameOver ();
 	}
 }
