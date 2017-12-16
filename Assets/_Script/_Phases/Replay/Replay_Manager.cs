@@ -7,6 +7,8 @@ public class Replay_Manager : MonoBehaviour {
 
 	public GameController gameController;
 	public GamePlay_Manager gamePlay_Manager;
+	public AudioSource audioSuccess;
+	public AudioSource audioFail;
 
 	// Use this for initialization
 	void Start () {
@@ -25,9 +27,11 @@ public class Replay_Manager : MonoBehaviour {
 		if (gamePlay_Manager.lastDistance != 0) {
 			anim.SetInteger ("type", 1);
 			ShowDistance (gamePlay_Manager.lastDistance);
+			audioSuccess.PlayOneShot (audioSuccess.clip);
 		} else {
 			anim.SetInteger ("type", 2);
 			ShowDistance (0);
+			audioFail.PlayOneShot (audioFail.clip);
 		}
 	}
 
