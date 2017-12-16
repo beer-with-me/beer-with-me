@@ -24,6 +24,7 @@ public class GameController : MonoBehaviour {
 
 	public GameObject Y_dialog_gmo;
 	public Dialog_Delegate dialog_Delegate;
+	public GameObject DialogCanvas;
 	public bool has_dialog;
 
 	public int version = 1;
@@ -104,16 +105,20 @@ public class GameController : MonoBehaviour {
 		phase_has_change = true;
 	}
 
-	public void Start_Dialog(Dialog_Delegate d, string title, string content, int options_amount){ // dir=1 -> Y
-		if (has_dialog) return;
-		has_dialog = true;
-		GameObject dialog = Instantiate (Y_dialog_gmo, Vector2.zero, Quaternion.Euler(90, 0, 0));
-		Vector3 scale = dialog.transform.localScale;
-		float ratio = width_length / scale.x;
-		dialog.transform.localScale = new Vector3 (scale.x * ratio, scale.y * ratio, scale.z * ratio);
-		dialog.GetComponent<Dialog_manager> ().dialog_Delegate = d;
-		dialog.GetComponent<Dialog_manager> ().options_amount = options_amount;
-		dialog.transform.Find ("canvas").Find ("Title").GetComponent<Text> ().text = title;
-		dialog.transform.Find ("canvas").Find ("Content").GetComponent<Text> ().text = content;
+	public void Start_Dialog(Dialog_Delegate d, string title, string content, int options_amount) { // dir=1 -> Y
+//		if (has_dialog) return;
+//		has_dialog = true;
+//		GameObject dialog = Instantiate (Y_dialog_gmo, Vector2.zero, Quaternion.Euler(90, 0, 0));
+//		Vector3 scale = dialog.transform.localScale;
+//		float ratio = width_length / scale.x;
+//		dialog.transform.localScale = new Vector3 (scale.x * ratio, scale.y * ratio, scale.z * ratio);
+//		dialog.GetComponent<Dialog_manager> ().dialog_Delegate = d;
+//		dialog.GetComponent<Dialog_manager> ().options_amount = options_amount;
+//		dialog.transform.Find ("canvas").Find ("Title").GetComponent<Text> ().text = title;
+//		dialog.transform.Find ("canvas").Find ("Content").GetComponent<Text> ().text = content;
+		DialogCanvas.SetActive(true);
+		dialog_Delegate = d;
+		DialogCanvas.transform.Find("Dialog").Find ("Title").GetComponent<Text> ().text = title;
+		DialogCanvas.transform.Find("Dialog").Find ("Message").GetComponent<Text> ().text = content;
 	}
 }

@@ -22,12 +22,13 @@ public class Replay_Manager : MonoBehaviour {
 
 		Animator anim = GetComponent<Animator> ();
 		// type: 1=success, 2=fail
-		if (gamePlay_Manager.isSuccessful) {
+		if (gamePlay_Manager.lastDistance != 0) {
 			anim.SetInteger ("type", 1);
+			ShowDistance (gamePlay_Manager.lastDistance);
 		} else {
 			anim.SetInteger ("type", 2);
+			ShowDistance (0);
 		}
-		ShowDistance (gamePlay_Manager.lastDistance);
 	}
 
 	public void OnPressOk(bool ok) {
@@ -39,7 +40,6 @@ public class Replay_Manager : MonoBehaviour {
 	}
 
 	void ShowDistance (float distance) {
-		Debug.Log (distance);
-		// gameController.Start_Dialog (OnPressOk, "Score", distance.ToString (), 2);
+		gameController.Start_Dialog (OnPressOk, "再玩一次?", distance.ToString (), 2);
 	}
 }
