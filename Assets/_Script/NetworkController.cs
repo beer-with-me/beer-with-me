@@ -163,6 +163,8 @@ public class Packet{
 				_long = datas [d_pointer] + ((datas [d_pointer] > 0) ? 0 : 4294967296);
 				ret [b_d_pointer++] = System.Convert.ToByte (_long % 256);	_long /= 256;
 				ret [b_d_pointer++] = System.Convert.ToByte (_long % 256);	_long /= 256;
+				ret [b_d_pointer++] = System.Convert.ToByte (_long % 256);	_long /= 256;
+				ret [b_d_pointer++] = System.Convert.ToByte (_long % 256);	_long /= 256;
 				d_pointer++;
 				break;
 			case Data_Type.Unsigned_Short:
