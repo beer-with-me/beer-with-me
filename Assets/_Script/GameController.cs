@@ -81,22 +81,12 @@ public class GameController : MonoBehaviour {
 
 	// 取得裝置大小
 	void Get_Device_Size(){
-		#if UNITY_EDITOR
 		dpi = Screen.dpi;
-		height_length = Screen.height / dpi;
-		width_length = Screen.width / dpi;
-		#else
-//		AndroidJavaClass activityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-//		AndroidJavaObject activity = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
-//		AndroidJavaObject metrics = new AndroidJavaObject("android.util.DisplayMetrics");
-//		activity.Call<AndroidJavaObject>("getWindowManager").Call<AndroidJavaObject>("getDefaultDisplay").Call("getMetrics", metrics);
-//		dpi = (metrics.Get<float>("xdpi") + metrics.Get<float>("ydpi")) * 0.5f;
-//		height_length = Screen.height/dpi;
-//		width_length = Screen.width/dpi;
-		dpi = Screen.dpi;
+		if (dpi == 0) {
+			dpi = 400.0f;
+		}
 		height_length = Screen.height / dpi * 4;
 		width_length = Screen.width / dpi * 4;
-		#endif
 		mainCamera.orthographicSize = width_length * height_length / 2;
 	}
 
