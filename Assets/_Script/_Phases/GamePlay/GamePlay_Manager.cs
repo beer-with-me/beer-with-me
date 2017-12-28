@@ -36,6 +36,7 @@ public class GamePlay_Manager : MonoBehaviour {
 
 	// when the phase begin
 	void OnEnable () {
+		Delete_all_objects (new string[2]{"Beer", "Item"});
 		mainCamera.orthographicSize = gameController.width_length * gameController.height_length / 2;
 		table.transform.localScale = new Vector3 (gameController.width_length, 1, gameController.height_length);
 		tableWidth = table.GetComponent<MeshRenderer> ().bounds.size.x;
@@ -164,5 +165,12 @@ public class GamePlay_Manager : MonoBehaviour {
 	public void M2C_Score(Packet packet){
 		this.lastDistance = packet.datas [1];
 		GameOver ();
+	}
+
+	void Delete_all_objects(string[] tags){
+		foreach (string tag in tags) {
+			GameObject[] gmos = GameObject.FindGameObjectsWithTag (tag);
+			foreach (GameObject g in gmos) Destroy (g);
+		}
 	}
 }

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Beer
   - ReplayCamera
+  - Item
   layers:
   - Default
   - TransparentFX

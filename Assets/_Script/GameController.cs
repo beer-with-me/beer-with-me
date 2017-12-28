@@ -22,6 +22,7 @@ public class Pair{
 public class GameController : MonoBehaviour {
 	public NetworkController networkController;
 
+	public Transform dialog_folder;
 	public GameObject Y_dialog_gmo;
 	public Dialog_Delegate dialog_Delegate;
 	public GameObject DialogCanvas;
@@ -98,10 +99,9 @@ public class GameController : MonoBehaviour {
 	public void Start_Dialog(Dialog_Delegate d, string title, string content, int options_amount) { // dir=1 -> Y
 //		if (has_dialog) return;
 //		has_dialog = true;
-//		GameObject dialog = Instantiate (Y_dialog_gmo, Vector2.zero, Quaternion.Euler(90, 0, 0));
+//		GameObject dialog = Instantiate (Y_dialog_gmo, Vector2.zero, Quaternion.Euler(90, 0, 0),dialog_folder);
 //		Vector3 scale = dialog.transform.localScale;
-//		float ratio = width_length / scale.x;
-//		dialog.transform.localScale = new Vector3 (scale.x * ratio, scale.y * ratio, scale.z * ratio);
+//		dialog.transform.localScale *= mainCamera.orthographicSize / 4;
 //		dialog.GetComponent<Dialog_manager> ().dialog_Delegate = d;
 //		dialog.GetComponent<Dialog_manager> ().options_amount = options_amount;
 //		dialog.transform.Find ("canvas").Find ("Title").GetComponent<Text> ().text = title;

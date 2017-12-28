@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ConnectSetup_Manager : MonoBehaviour {
 	public GameController gameController;
 	public NetworkController networkController;
 	public KeyBoard_Handler keyBoard_Handler;
 	private int serverReceiveIndex;
+	public InputField inputField;
 
 	private bool onReceive;
 	private Packet receivePacket;
@@ -41,7 +43,8 @@ public class ConnectSetup_Manager : MonoBehaviour {
 
 	public void Join_Room(){
 		// 向伺服端送出加入要求
-		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_JOIN, new int[3] {keyBoard_Handler.room_ID, (int)(gameController.height_length * 100), (int)(gameController.width_length * 100)}));
+		gameController.room_ID = int.Parse(inputField.text);
+		networkController.SendToServer (new Packet (gameController.version, C2M_Command.C2M_JOIN, new int[3] {int.Parse(inputField.text), (int)(gameController.height_length * 100), (int)(gameController.width_length * 100)}));
 	}
 
 
@@ -73,7 +76,6 @@ public class ConnectSetup_Manager : MonoBehaviour {
 	public void M2C_Join(Packet packet){
 		if (packet.datas [0] == 0) {
 			// 加入成功
-			gameController.room_ID = keyBoard_Handler.room_ID;
 			Setup_Game();
 		} else {
 			gameController.Start_Dialog (null, "Error", "Can't find this room.", 1);
