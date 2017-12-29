@@ -36,7 +36,6 @@ public class GamePlay_Manager : MonoBehaviour {
 
 	// when the phase begin
 	void OnEnable () {
-		Delete_all_objects (new string[2]{"Beer", "Item"});
 		mainCamera.orthographicSize = gameController.width_length * gameController.height_length / 2;
 		table.transform.localScale = new Vector3 (gameController.width_length, 1, gameController.height_length);
 		tableWidth = table.GetComponent<MeshRenderer> ().bounds.size.x;
@@ -91,7 +90,10 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	public int GetDistance(float distance) {
-		return (int)(lastDistance * 10);
+		if (distance > 65535) {
+			distance = 65000;
+		}
+		return (int)(distance);
 	}
 
 	public void EnterEdge(int dirKey, float offset) {
@@ -110,6 +112,7 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	private void GameOver() {
+		Delete_all_objects (new string[2]{"Beer", "Item"});
 		gameController.SwitchPhases (Phases.Replay);
 	}
 		
