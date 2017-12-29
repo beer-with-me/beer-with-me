@@ -41,6 +41,7 @@ public enum M2C_Command{
 	M2C_WAIT_FIRE = 0x52,
 	M2C_CROSS = 0x60,
 	M2C_SCORE = 0x68,
+	M2C_PONG = 0x70,
 	M2C_EXIT = 0x80,
 }
 
@@ -248,6 +249,7 @@ public class Packet{
 		case M2C_Command.M2C_WAIT_FIRE:	return new Data_Type[3]{ Data_Type.Byte, Data_Type.Short, Data_Type.Short };
 		case M2C_Command.M2C_CROSS:		return new Data_Type[6]{ Data_Type.Byte, Data_Type.Int, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.SP_Float, Data_Type.Int };
 		case M2C_Command.M2C_SCORE:		return new Data_Type[2]{ Data_Type.Short, Data_Type.Short };
+		case M2C_Command.M2C_PONG:		return new Data_Type[0]{};
 		case M2C_Command.M2C_EXIT:		return new Data_Type[0]{};
 		default:
 			break;
@@ -294,6 +296,7 @@ public class Packet{
 }
 
 public class Subscriptor{
+	public int index;
 	public Subscriptor_Delegate subscriptor_Delegate;
 	public M2C_Command[] commands;
 
@@ -308,17 +311,45 @@ public class NetworkController : MonoBehaviour {
 	private int serverPort = 8787;
 	public GameController gameController;
 
+	private int serverReceiveIndex;
+	private bool onReceive;
+	private Packet receivePacket;
+
 	private Socket _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 	private byte[] _recieveBuffer = new byte[2048];
 	[HideInInspector] public bool is_Connect;
 	public bool hide_ping_msg;
+	private float ping_value{
+		set{
+			gameController.ping_text.text = ((int)(value * 1000)).ToString () + "ms";
+		}
+	}
+	private float ping_time;
+	private bool send_ping;
+	private float pong_time {
+		set{
+			ping_value = value - ping_time;
+			send_ping = false;
+		}
+	}
 
 	private List<Subscriptor> subscriptors = new List<Subscriptor> {};
+	int subcriptor_index;
 
 	void Start () {
 		is_Connect = false;
+		send_ping = false;
+		subcriptor_index = 0;
 		StartConnection(serverIp, serverPort);
 		StartCoroutine (Start_Ping ());
+		serverReceiveIndex = AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[1]{M2C_Command.M2C_PONG}));
+	}
+
+	void Update(){
+		if (onReceive) {
+			AnalysisReceive (receivePacket);
+			onReceive = false;
+		}
 	}
 
 	void OnApplicationQuit() {
@@ -363,7 +394,13 @@ public class NetworkController : MonoBehaviour {
 
 	IEnumerator Start_Ping(){
 		while (true) {
-			if (is_Connect) SendToServer (new Packet(gameController.version, C2M_Command.C2M_PING, new int[0]{}));
+			if (is_Connect) {
+				SendToServer (new Packet (gameController.version, C2M_Command.C2M_PING, new int[0]{ }));
+				if (!send_ping) {
+					ping_time = Time.time;
+					send_ping = true;
+				}
+			}
 			yield return new WaitForSeconds (1);
 		}
 	}
@@ -372,14 +409,14 @@ public class NetworkController : MonoBehaviour {
 	private void ReceiveCallback(IAsyncResult AR)
 	{
 		int recieved = _clientSocket.EndReceive(AR);
-		Debug.Log ("received " + recieved.ToString () + " bytes");
+//		Debug.Log ("received " + recieved.ToString () + " bytes");
 		if(recieved <= 0)
 			return;
 
 		byte[] recData = new byte[recieved];
 		Buffer.BlockCopy(_recieveBuffer,0,recData,0,recieved);
 		Packet packet = new Packet(recData);
-		packet.Print ("RECEIVED");
+		if(packet.M2C_command != M2C_Command.M2C_PONG || !hide_ping_msg)packet.Print ("RECEIVED");
 
 		// Notify other managers when receiving data from server
 		foreach (Subscriptor subscriptor in subscriptors) {
@@ -394,18 +431,47 @@ public class NetworkController : MonoBehaviour {
 	}
 
 	public int AddSubscriptor(Subscriptor subscriptor) {
-		int index = subscriptors.Count;
+		int index = subcriptor_index++;
+		subscriptor.index = index;
 		subscriptors.Add (subscriptor);
 		return index;
 	}
 
 	public void RemoveSubscriptor(int index) {
-		subscriptors.RemoveAt (index);
+		for(int i=0;i<subscriptors.Count;i++){
+			Subscriptor s = subscriptors [i];
+			if (s.index == index) {
+				subscriptors.RemoveAt(i);
+				break;
+			}
+		}
 	}
 		
 	/// 關閉 Socket 連線.
 	public void CloseConnection() {
 		_clientSocket.Shutdown(SocketShutdown.Both);
 		_clientSocket.Close();
+	}
+
+
+
+
+	public void OnReceive(Packet packet) {
+		onReceive = true;
+		receivePacket = packet;
+	}
+	public void AnalysisReceive(Packet packet){
+		switch (packet.M2C_command) {
+		case M2C_Command.M2C_PONG:
+			M2C_PONG (packet);
+			break;
+		default:
+			break;
+		}
+	}
+
+	void M2C_PONG(Packet packet){
+		pong_time = Time.time;
+		send_ping = false;
 	}
 }

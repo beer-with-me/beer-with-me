@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour {
 	public GameObject DialogCanvas;
 	public bool has_dialog;
 
+	public Text ping_text;
 	public int version = 1;
 	public Phases now_Phase;
 	public bool phase_has_change;
