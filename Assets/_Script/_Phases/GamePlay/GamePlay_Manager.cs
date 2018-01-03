@@ -21,7 +21,6 @@ public class GamePlay_Manager : MonoBehaviour {
 	public int forceMultiplication = 0;
 	public bool isPlaying = false;
 	public float lastDistance = 0.0f;
-	public bool isLeavingTable = false;
 	public float highestScore = 0.0f;
 
 	public GameObject beer_prefab;
@@ -55,7 +54,6 @@ public class GamePlay_Manager : MonoBehaviour {
 		lastDistance = 0.0f;
 		highestScore = 0.0f;
 		forceMultiplication = 20;
-		isLeavingTable = false;
 		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[2]{M2C_Command.M2C_CROSS, M2C_Command.M2C_SCORE}));
 
 		Init_Table ();
@@ -85,10 +83,8 @@ public class GamePlay_Manager : MonoBehaviour {
 	}
 
 	public void Stop() {
-		if (!isLeavingTable) {
-			Debug.Log ("Game Over");
-			BeerStop ();
-		}
+		Debug.Log ("Game Over");
+		BeerStop ();
 	}
 
 	public int GetDistance(float distance) {

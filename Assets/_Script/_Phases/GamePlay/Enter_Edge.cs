@@ -25,7 +25,6 @@ public class Enter_Edge : MonoBehaviour {
 				} else {
 					offset = pZ - oZ;
 				}
-				gamePlay_manager.isLeavingTable = true;
 				gamePlay_manager.EnterEdge (dirKey, offset);
 			} else {
 				// Non-first enter
