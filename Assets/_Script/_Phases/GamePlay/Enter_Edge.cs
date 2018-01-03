@@ -20,12 +20,13 @@ public class Enter_Edge : MonoBehaviour {
 				float pZ = collisionInfo.contacts [0].point.z;
 				float offset = 0.0f;
 
+
 				if (dirKey == 3 || dirKey == 6) {
-					offset = pX - oX;
+					offset = pX * 100 - oX * 100;
 				} else {
-					offset = pZ - oZ;
+					offset = pZ * 100 - oZ * 100;
 				}
-				gamePlay_manager.EnterEdge (dirKey, offset);
+				gamePlay_manager.EnterEdge (dirKey, offset / 100);
 			} else {
 				// Non-first enter
 				gamePlay_manager.swipe = collisionInfo.gameObject.GetComponent<Swipe>();
