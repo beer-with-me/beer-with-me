@@ -26,11 +26,11 @@ public class Replay_Manager : MonoBehaviour {
 		// type: 1=success, 2=fail
 		if (gamePlay_Manager.lastDistance != 0) {
 			anim.SetInteger ("type", 1);
-			ShowDistance (gamePlay_Manager.lastDistance);
+			ShowDistance ();
 			audioSuccess.PlayOneShot (audioSuccess.clip);
 		} else {
 			anim.SetInteger ("type", 2);
-			ShowDistance (0);
+			ShowDistance ();
 			audioFail.PlayOneShot (audioFail.clip);
 		}
 	}
@@ -43,7 +43,7 @@ public class Replay_Manager : MonoBehaviour {
 		}
 	}
 
-	void ShowDistance (float distance) {
-		gameController.Start_Dialog (OnPressOk, "再玩一次?", distance.ToString (), 2);
+	void ShowDistance () {
+		gameController.Start_Dialog (OnPressOk, "再玩一次?", gamePlay_Manager.lastDistance.ToString () + " / " + gamePlay_Manager.highestScore.ToString (), 2);
 	}
 }

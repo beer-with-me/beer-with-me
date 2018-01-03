@@ -22,6 +22,7 @@ public class GamePlay_Manager : MonoBehaviour {
 	public bool isPlaying = false;
 	public float lastDistance = 0.0f;
 	public bool isLeavingTable = false;
+	public float highestScore = 0.0f;
 
 	public GameObject beer_prefab;
 	public GameObject table;
@@ -52,6 +53,7 @@ public class GamePlay_Manager : MonoBehaviour {
 		parent = GameObject.Find ("GamePlayPhase");
 		isPlaying = true;
 		lastDistance = 0.0f;
+		highestScore = 0.0f;
 		forceMultiplication = 20;
 		isLeavingTable = false;
 		serverReceiveIndex = networkController.AddSubscriptor (new Subscriptor(OnReceive, new M2C_Command[2]{M2C_Command.M2C_CROSS, M2C_Command.M2C_SCORE}));
@@ -166,7 +168,8 @@ public class GamePlay_Manager : MonoBehaviour {
 
 
 	public void M2C_Score(Packet packet){
-		this.lastDistance = packet.datas [1];
+		this.highestScore = packet.datas [1];
+		this.lastDistance = packet.datas [0];
 		GameOver ();
 	}
 
